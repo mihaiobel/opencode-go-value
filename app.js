@@ -1,10 +1,13 @@
-/* opencode-go Value – client-side role recommendation and sortable table.
+/* opencode-go Value: client-side role recommendation and sortable table.
  * Loads ./data/latest.json (same origin, no external requests) and applies the
  * role matrix documented in the Methodology section of index.html.
  */
 "use strict";
 
 const DATA_URL = "data/latest.json";
+
+// Placeholder for a missing value across cards, table and meta.
+const NA = "n/a";
 
 /* ---------- helpers ---------- */
 
@@ -59,7 +62,7 @@ function idDesc(a, b) {
 /* ---------- role matrix ---------- */
 
 // orchestrator: biggest req/5h among AA-intel >= 38, plus the muse-spark
-// no_data special case (biggest quota wins there).
+// no_data special case, where the biggest quota wins.
 function pickOrchestrator(models) {
   const pool = models.filter((m) => {
     if (isFree(m)) return false;
@@ -77,7 +80,7 @@ function pickOrchestrator(models) {
   return pool[0] || null;
 }
 
-// dev: max(speed × req/5h) at intel >= 34 and monthly limit >= $30.
+// dev: highest AA speed × req/5h at intel >= 34 and monthly limit >= $30.
 function pickDev(models) {
   const pool = models.filter((m) => {
     if (isFree(m)) return false;
@@ -95,7 +98,7 @@ function pickDev(models) {
 }
 
 // researcher: cheapest AA-$/Task at req/5h >= 3000 with a usable intelligence
-// floor (>= 34, same bar as dev) and not the dev model.
+// floor of >= 34, same bar as dev, and not the dev model.
 function pickResearcher(models, dev) {
   const pool = models.filter((m) => {
     if (isFree(m)) return false;
@@ -116,7 +119,7 @@ function pickResearcher(models, dev) {
 }
 
 // reviewer: max intel at req/5h >= 1000 in a family not already used by the
-// other roles (dev + researcher + orchestrator) -> uncorrelated failures.
+// other roles, so failures stay uncorrelated.
 function pickReviewer(models, usedFamilies) {
   const pool = models.filter((m) => {
     if (isFree(m)) return false;
@@ -150,9 +153,9 @@ function recommend(models) {
 /* ---------- formatting ---------- */
 
 function fmtNum(v, digits) {
-  if (v === null || v === undefined) return "–";
+  if (v === null || v === undefined) return NA;
   const n = Number(v);
-  if (!isFinite(n)) return "–";
+  if (!isFinite(n)) return NA;
   return n.toLocaleString("en-US", {
     minimumFractionDigits: digits ?? 0,
     maximumFractionDigits: digits ?? 0,
@@ -160,9 +163,9 @@ function fmtNum(v, digits) {
 }
 
 function fmtUsd(v, digits) {
-  if (v === null || v === undefined) return "–";
+  if (v === null || v === undefined) return NA;
   const n = Number(v);
-  if (!isFinite(n)) return "–";
+  if (!isFinite(n)) return NA;
   return "$" + n.toLocaleString("en-US", {
     minimumFractionDigits: digits ?? 0,
     maximumFractionDigits: Math.max(digits ?? 0, 4),
@@ -188,9 +191,9 @@ function fillRoleCard(card, model) {
   field("month").textContent = fmtUsd(model.monthly_limit_usd, 0);
   field("intel").textContent = fmtNum(model.aa_intelligence);
   field("speed").textContent =
-    model.aa_speed_tps == null ? "–" : fmtNum(model.aa_speed_tps, 1) + " t/s";
+    model.aa_speed_tps == null ? NA : fmtNum(model.aa_speed_tps, 1) + " t/s";
   field("cost").textContent = fmtUsd(model.aa_cost_per_task, 2);
-  field("status").textContent = model.aa_status || "–";
+  field("status").textContent = model.aa_status || NA;
 }
 
 function renderRoles(reco) {
@@ -219,7 +222,7 @@ let sortState = { key: "aa_intelligence", dir: -1 };
 
 function fmtCell(col, m) {
   const raw = col.cell(m);
-  if (col.type === "text") return raw === null || raw === undefined ? "–" : String(raw);
+  if (col.type === "text") return raw === null || raw === undefined ? NA : String(raw);
   switch (col.key) {
     case "monthly_limit_usd":
       return fmtUsd(raw, 0);
@@ -228,7 +231,7 @@ function fmtCell(col, m) {
     case "price_cached":
       return fmtUsd(raw, raw != null && Math.abs(raw) < 1 ? 3 : 2);
     case "aa_speed_tps":
-      return raw == null ? "–" : fmtNum(raw, 1);
+      return raw == null ? NA : fmtNum(raw, 1);
     case "aa_cost_per_task":
       return fmtUsd(raw, 2);
     default:
@@ -312,7 +315,7 @@ function renderTable(models, reco) {
         if (isFree(m)) {
           const tag = document.createElement("span");
           tag.className = "badge badge-free";
-          tag.textContent = "free – excluded";
+          tag.textContent = "free, excluded";
           tag.title =
             "Free model: limited-time availability, prone to instability/timeouts, no dedicated AA slug.";
           td.append(" ", tag);
@@ -329,17 +332,22 @@ function renderTable(models, reco) {
 
 function renderMeta(meta) {
   const stand = document.getElementById("stand-date");
-  if (stand) stand.textContent = meta.stand_datum || "–";
+  if (stand) stand.textContent = meta.stand_datum || NA;
   const plan = document.getElementById("plan-name");
-  if (plan) plan.textContent = meta.plan || "opencode-go";
+  // meta.plan carries a parenthesised price; strip the parentheses for display.
+  if (plan) {
+    plan.textContent = String(meta.plan || "opencode-go")
+      .replace(" (", ",")
+      .replace(")", "");
+  }
   const aav = document.getElementById("aa-version");
-  if (aav) aav.textContent = meta.aa_index_version || "–";
+  if (aav) aav.textContent = meta.aa_index_version || NA;
   // The header hint is static English in index.html; the data's own notes are
   // not surfaced, keeping the visible UI in one language.
 }
 
-// The data lists many deep links (opencode docs/models pages, one AA page per
-// model). The Sources section shows only the two canonical root domains.
+// The data lists many deep links: opencode docs and models pages, and one AA
+// page per model. The Sources section shows only the two canonical root domains.
 const SOURCE_ROOTS = ["opencode.ai", "artificialanalysis.ai"];
 
 function renderSources(meta) {
@@ -423,7 +431,7 @@ async function init() {
     if (!res.ok) throw new Error("HTTP " + res.status);
     payload = await res.json();
   } catch (err) {
-    showLoadError("Data could not be loaded (" + err.message + ").");
+    showLoadError("Data could not be loaded: " + err.message);
     return;
   }
 

@@ -1,17 +1,16 @@
 # opencode-go Value
 
-Static GitHub Pages site (vanilla HTML/CSS/JS, **no build step**) that recommends
-the **best model per agent role** from Go plan quota and Artificial Analysis
-benchmarks.
+Static GitHub Pages site in vanilla HTML, CSS and JS. No build step. It recommends
+the best model per agent role from Go plan quota and Artificial Analysis benchmarks.
 
-- **Go plan only ($10/month)** — **Go Plus is ignored**.
+- Go plan only, $10/month. Go Plus is ignored.
 - Roles: `orchestrator`, `dev`, `reviewer`, `researcher`.
-- **Free models are excluded** (`longcat-2.5-preview-free`, `step-5-preview-free`):
-  available for a limited time only, prone to instability/timeouts, no dedicated AA
-  slug. They are never recommended and appear greyed out in the table.
+- Free models `longcat-2.5-preview-free` and `step-5-preview-free` are excluded:
+  limited-time only, prone to instability and timeouts, no dedicated AA slug.
+  They are never recommended and appear greyed out in the table.
 
-The recommendation is computed client-side in `app.js` from `data/latest.json`
-(see the "Role matrix" in the Methodology section of the page).
+The recommendation is computed client side in `app.js` from `data/latest.json`.
+See the Role matrix in the Methodology section of the page.
 
 ## Files
 
@@ -20,29 +19,29 @@ The recommendation is computed client-side in `app.js` from `data/latest.json`
 | `index.html` | single page: role cards, sortable full table, methodology, sources, copy button |
 | `app.js` | loads `data/latest.json`, computes the role recommendation, renders the sortable table |
 | `styles.css` | plain dark theme, mobile readable, no external dependencies |
-| `data/latest.json` | meta + model data (as-of date in the meta) |
-| `scripts/fetch_go.py` | updates the JSON from the Go docs (stdlib only) |
-| `.github/workflows/update-data.yml` | daily cron (06:00 UTC): refresh data + commit |
+| `data/latest.json` | meta and model data, as-of date in the meta |
+| `scripts/fetch_go.py` | updates the JSON from the Go docs, stdlib only |
+| `.github/workflows/update-data.yml` | daily cron at 06:00 UTC: refresh data and commit |
 | `.github/workflows/pages.yml` | GitHub Pages deploy |
-| `refresh-prompt.md` | copy-paste prompt (EN) for foreign opencode setups |
+| `refresh-prompt.md` | copy-paste prompt in English for foreign opencode setups |
 
 ## Data sources
 
-- `https://opencode.ai/docs/go/` — Go plan prices, monthly limits, estimated `req/5h`.
-- `https://opencode.ai/inference/go/v1/models` — full model ids.
-- `https://artificialanalysis.ai/models/<slug>` — Intelligence Index, Cost per Task, output speed.
+- `https://opencode.ai/docs/go/` for Go plan prices, monthly limits, estimated `req/5h`.
+- `https://opencode.ai/inference/go/v1/models` for full model ids.
+- `https://artificialanalysis.ai/models/<slug>` for Intelligence Index, Cost per Task, output speed.
 
-Missing AA pages are recorded as `aa_status: "no_data"` — **nothing is guessed**.
-The Sources section of the page shows only the two canonical root domains
-(`https://opencode.ai` and `https://artificialanalysis.ai`).
+Missing AA pages are recorded as `aa_status: "no_data"`. Nothing is guessed.
+The Sources section of the page shows only the two canonical root domains,
+`https://opencode.ai` and `https://artificialanalysis.ai`.
 
 ## Update flow
 
 1. `scripts/fetch_go.py` fetches the Go docs and the models endpoint and parses
-   **only** the Go tables (`data-plan-panel="go"`, not `go-plus`).
+   only the Go tables, `data-plan-panel="go"` and not `go-plus`.
 2. AA values are carried over per model id from the existing `data/latest.json`.
-   **New** models get `aa_status: "no_data"` (AA values stay `null`).
-3. The updated JSON is written to **stdout**:
+   New models get `aa_status: "no_data"` and AA values stay `null`.
+3. The updated JSON is written to stdout:
 
    ```bash
    python3 scripts/fetch_go.py --data data/latest.json > data/latest.json.tmp
@@ -50,8 +49,8 @@ The Sources section of the page shows only the two canonical root domains
    mv data/latest.json.tmp data/latest.json
    ```
 
-4. `.github/workflows/update-data.yml` does this daily at 06:00 UTC and commits
-   `data/latest.json` only when it changed (the as-of date in the meta is written along).
+4. `.github/workflows/update-data.yml` runs this daily at 06:00 UTC and commits
+   `data/latest.json` only when it changed. The as-of date in the meta is written along.
 
 Help and options:
 
@@ -67,20 +66,19 @@ python3 -m http.server 8000
 # then open http://localhost:8000/ in a browser
 ```
 
-No external requests are made; `data/latest.json` is loaded via a same-origin
-`fetch`.
+No external requests are made. `data/latest.json` is loaded via a same-origin `fetch`.
 
 ## Enable GitHub Pages
 
-1. Push the repository to GitHub (branch `main`).
+1. Push the repository to GitHub, branch `main`.
 2. Set **Settings → Pages → Build and deployment** to **GitHub Actions**.
-3. `.github/workflows/pages.yml` deploys the site on every push to `main`
-   (`actions/upload-pages-artifact` + `actions/deploy-pages`).
+3. `.github/workflows/pages.yml` deploys the site on every push to `main`. It uses
+   `actions/upload-pages-artifact` and `actions/deploy-pages`.
 4. For automatic data updates: set **Settings → Actions → General → Workflow permissions**
-   to *Read and write* (the commit step needs write access).
+   to *Read and write*, so the commit step has write access.
 
 ## License note
 
-The **data** comes from [opencode.ai](https://opencode.ai/docs/go/) and
-[Artificial Analysis](https://artificialanalysis.ai/) and may be reused only **with
-attribution**. The site code itself is under the MIT license.
+The data comes from [opencode.ai](https://opencode.ai/docs/go/) and
+[Artificial Analysis](https://artificialanalysis.ai/) and may be reused only with
+attribution. The site code itself is under the MIT license.

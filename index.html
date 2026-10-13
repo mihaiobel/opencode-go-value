@@ -3,26 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>opencode-go Value – best model per agent role</title>
-  <meta name="description" content="Recommends the best opencode Go model per agent role (orchestrator, dev, reviewer, researcher) from plan quota and Artificial Analysis benchmarks." />
+  <title>opencode-go Value: best model per agent role</title>
+  <meta name="description" content="Recommends the best opencode Go model per agent role from plan quota and Artificial Analysis benchmarks." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
     <h1>opencode-go Value</h1>
     <p class="subtitle">
-      Best model per agent role from Go plan quota ($10, <strong>no</strong> Go Plus)
-      and Artificial Analysis benchmarks.
+      Best opencode Go model per agent role, from plan quota and Artificial
+      Analysis benchmarks. Go plan only, $10/month; Go Plus is ignored.
     </p>
     <p class="meta-line">
-      As of: <span id="stand-date">–</span> ·
-      Plan: <span id="plan-name">opencode-go ($10/month)</span> ·
-      AA index: <span id="aa-version">–</span>
+      As of: <span id="stand-date">n/a</span> ·
+      Plan: <span id="plan-name">opencode-go, $10/month</span> ·
+      AA index: <span id="aa-version">n/a</span>
     </p>
     <p class="meta-hint" id="meta-hint">
-      Prices are in USD per 1M tokens; where context/peak tiering applies the base
-      tier is used. <code>req/5h</code> is the docs estimate for the Go plan, not a
-      hard limit. <code>aa_status</code>: ok | partial | mapped_step-5 | no_data.
+      Prices are in USD per 1M tokens; where context or peak tiering applies the
+      base tier is used. <code>req/5h</code> is the docs estimate for the Go plan,
+      not a hard limit. <code>aa_status</code>: ok | partial | mapped_step-5 | no_data.
     </p>
   </header>
 
@@ -32,88 +32,82 @@
       <div id="role-cards" class="cards">
         <article class="card" data-role="orchestrator">
           <h3 class="card-role">Orchestrator</h3>
-          <p class="card-model" data-field="model">–</p>
+          <p class="card-model" data-field="model">n/a</p>
           <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">–</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">–</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">–</dd></div>
-            <div class="metric"><dt>AA speed</dt><dd data-field="speed">–</dd></div>
-            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">–</dd></div>
-            <div class="metric"><dt>AA status</dt><dd data-field="status">–</dd></div>
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+            <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
+            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
+            <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            Many small turns and long, repetitive sessions: largest req/5h among
-            models with AA intel ≥ 38 (or the muse-spark no_data special case with
-            the largest quota) plus a high cache discount.
+            Many small turns, long sessions: largest req/5h among models with AA
+            intel ≥ 38, or the muse-spark special case with no AA data and the
+            largest quota, plus a high cache discount.
           </p>
         </article>
 
         <article class="card" data-role="dev">
           <h3 class="card-role">Dev</h3>
-          <p class="card-model" data-field="model">–</p>
+          <p class="card-model" data-field="model">n/a</p>
           <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">–</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">–</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">–</dd></div>
-            <div class="metric"><dt>AA speed</dt><dd data-field="speed">–</dd></div>
-            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">–</dd></div>
-            <div class="metric"><dt>AA status</dt><dd data-field="status">–</dd></div>
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+            <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
+            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
+            <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            Most calls per task: maximises speed × req/5h at AA intel ≥ 34 and a
-            monthly limit ≥ $30 — frequency beats peak.
+            Most calls per task: maximises AA speed × req/5h at AA intel ≥ 34 and a
+            monthly limit ≥ $30. Frequency beats peak.
           </p>
         </article>
 
         <article class="card" data-role="reviewer">
           <h3 class="card-role">Reviewer</h3>
-          <p class="card-model" data-field="model">–</p>
+          <p class="card-model" data-field="model">n/a</p>
           <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">–</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">–</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">–</dd></div>
-            <div class="metric"><dt>AA speed</dt><dd data-field="speed">–</dd></div>
-            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">–</dd></div>
-            <div class="metric"><dt>AA status</dt><dd data-field="status">–</dd></div>
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+            <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
+            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
+            <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            About one call per task, long reports: highest AA intel in a family that
-            neither Dev nor Researcher uses (uncorrelated failures), req/5h ≥ 1000.
+            About one call per task, long reports: highest AA intel at req/5h ≥ 1000
+            in a family that neither Dev nor Researcher uses, so failures stay
+            uncorrelated.
           </p>
         </article>
 
         <article class="card" data-role="researcher">
           <h3 class="card-role">Researcher</h3>
-          <p class="card-model" data-field="model">–</p>
+          <p class="card-model" data-field="model">n/a</p>
           <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">–</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">–</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">–</dd></div>
-            <div class="metric"><dt>AA speed</dt><dd data-field="speed">–</dd></div>
-            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">–</dd></div>
-            <div class="metric"><dt>AA status</dt><dd data-field="status">–</dd></div>
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+            <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
+            <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
+            <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            Read-only and must not burn Dev quota: cheapest AA $/task at req/5h ≥ 3000
-            with usable intelligence (≥ 34), and not the Dev model.
+            Read-only, must not burn Dev quota: cheapest AA $/task at req/5h ≥ 3000,
+            usable intelligence of 34 or more, and not the Dev model.
           </p>
         </article>
       </div>
-      <p class="free-note">
-        <strong>Free models are excluded.</strong>
-        <code>longcat-2.5-preview-free</code> and <code>step-5-preview-free</code> are only
-        available for a <em>limited time</em>, are prone to instability/timeouts, and
-        have no dedicated AA slug — they are never recommended and appear greyed out
-        in the table.
-      </p>
     </section>
 
     <section aria-labelledby="table-heading">
       <h2 id="table-heading">All models</h2>
-      <p class="hint">Click a column header to sort. Grey = no AA data; “free” = excluded.</p>
+      <p class="hint">Click a column header to sort. Grey means no AA data; free models are excluded.</p>
       <div class="table-wrap">
         <table id="models-table" class="models">
-          <tbody><tr><td class="loading">Loading models …</td></tr></tbody>
+          <tbody><tr><td class="loading">Loading models.</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -123,37 +117,36 @@
       <h3>Role matrix</h3>
       <ul class="matrix">
         <li>
-          <strong>Orchestrator</strong> — largest <code>req/5h</code> among models with
-          AA intel ≥ 38, <em>or</em> the muse-spark special case (<code>no_data</code> but
-          the largest quota). Many small turns, cache discount counts.
+          <strong>Orchestrator</strong>: largest <code>req/5h</code> among models
+          with AA intel ≥ 38, or the muse-spark special case with no AA data and the
+          largest quota.
         </li>
         <li>
-          <strong>Dev</strong> — maximises <code>AA speed × req/5h</code> at AA intel ≥ 34
-          and a monthly limit ≥ $30. Frequency beats peak.
+          <strong>Dev</strong>: maximises AA speed × <code>req/5h</code> at AA intel
+          ≥ 34 and a monthly limit ≥ $30.
         </li>
         <li>
-          <strong>Reviewer</strong> — highest AA intel at <code>req/5h ≥ 1000</code> in a
-          model family that neither Dev nor Researcher occupies (uncorrelated failures).
+          <strong>Reviewer</strong>: highest AA intel at <code>req/5h ≥ 1000</code>
+          in a family that neither Dev nor Researcher occupies.
         </li>
         <li>
-          <strong>Researcher</strong> — cheapest AA $/task at <code>req/5h ≥ 3000</code>,
-          usable intelligence (≥ 34), and not the Dev model.
+          <strong>Researcher</strong>: cheapest AA $/task at <code>req/5h ≥ 3000</code>,
+          usable intelligence of 34 or more, and not the Dev model.
         </li>
-      </ul>
-
-      <h3>Free exclusion</h3>
-      <p>
-        Free models can never be recommended:
-      </p>
-      <ul class="matrix">
-        <li><strong>Limited time:</strong> their continuation is not guaranteed — no stable best-value recommendation is possible.</li>
-        <li><strong>Timeouts / unstable:</strong> free tiers are throttled under load (rate limits, 429s/timeouts).</li>
-        <li><strong>No dedicated AA slugs:</strong> no reliable benchmark dataset (404). Where mapped, the origin is flagged (e.g. <code>step-5</code>).</li>
       </ul>
       <p class="hint">
-        Families are derived from the id prefix (e.g. <code>deepseek-*</code>,
-        <code>mimo-*</code>, <code>claude-*</code>). Missing values are never guessed.
+        Families come from the id prefix, such as <code>deepseek-*</code>,
+        <code>mimo-*</code> and <code>claude-*</code>. Missing values are never
+        guessed.
       </p>
+
+      <h3>Free exclusion</h3>
+      <p>Free models can never be recommended:</p>
+      <ul class="matrix">
+        <li><strong>Limited time:</strong> their continuation is not guaranteed, so no stable recommendation is possible.</li>
+        <li><strong>Unstable:</strong> free tiers throttle under load and hit 429s and timeouts.</li>
+        <li><strong>No dedicated AA slug:</strong> no reliable benchmark data, 404. Where mapped, the origin is flagged, such as <code>step-5</code>.</li>
+      </ul>
     </section>
 
     <section aria-labelledby="prompt-heading">
@@ -161,23 +154,23 @@
       <p class="hint">For other opencode setups: copy and run daily to re-evaluate.</p>
       <div class="prompt-box">
         <button id="copy-prompt" type="button">Copy daily prompt</button>
-        <pre id="daily-prompt">Re-evaluate the opencode Go models ($10 plan, NOT Go Plus).
+        <pre id="daily-prompt">Re-evaluate the opencode Go models, $10 plan, NOT Go Plus.
 
 Sources:
-- <a href="https://opencode.ai/docs/go/">https://opencode.ai/docs/go/</a>  (Go column of the pricing and requests tables)
-- <a href="https://opencode.ai/inference/go/v1/models">https://opencode.ai/inference/go/v1/models</a>  (model ids)
-- <a href="https://artificialanalysis.ai/models/&lt;slug&gt;">https://artificialanalysis.ai/models/&lt;slug&gt;</a>  (intel index, $/task, speed)
+- <a href="https://opencode.ai/docs/go/">https://opencode.ai/docs/go/</a>  Go column of the pricing and requests tables
+- <a href="https://opencode.ai/inference/go/v1/models">https://opencode.ai/inference/go/v1/models</a>  model ids
+- <a href="https://artificialanalysis.ai/models/&lt;slug&gt;">https://artificialanalysis.ai/models/&lt;slug&gt;</a>  intel index, $/task, speed
 
 Procedure:
 1. For every Go model collect req/5h, monthly limit, in/out/cached prices and AA metrics.
    If the AA page is missing: mark it "no AA data", do not invent anything.
 2. Apply the role matrix:
-   - orchestrator: largest req/5h at AA intel >= 38 (or the muse-spark special case: largest quota, no_data).
-   - dev: max(AA speed × req/5h) at AA intel >= 34 and monthly limit >= $30.
-   - reviewer: highest AA intel at req/5h >= 1000 in a family other than dev/researcher.
-   - researcher: lowest AA $/task at req/5h >= 3000, AA intel >= 34, not the dev model.
-3. Exclude free models (longcat-2.5-preview-free, step-5-preview-free): limited time, unstable, no dedicated AA slug.
-4. Output: recommendation table (role | model id | rationale | key numbers) plus the full model table.</pre>
+   - orchestrator: largest req/5h at AA intel >= 38, or the muse-spark special case with the largest quota and no AA data.
+   - dev: max of AA speed times req/5h at AA intel >= 34 and monthly limit >= $30.
+   - reviewer: highest AA intel at req/5h >= 1000 in a family other than dev or researcher.
+   - researcher: lowest AA $/task at req/5h >= 3000, AA intel >= 34, and not the dev model.
+3. Exclude free models longcat-2.5-preview-free and step-5-preview-free: limited time, unstable, no dedicated AA slug.
+4. Output: recommendation table with role, model id, rationale and key numbers, plus the full model table.</pre>
       </div>
     </section>
 
@@ -192,10 +185,10 @@ Procedure:
 
   <footer class="site-footer">
     <p>
-      Static page with no build step and no external requests.
-      Data: <a href="https://opencode.ai" rel="noopener noreferrer" target="_blank">opencode.ai</a>
-      &amp; <a href="https://artificialanalysis.ai/" rel="noopener noreferrer" target="_blank">Artificial Analysis</a> —
-      reuse only with attribution.
+      Static page, no build step, no external requests.
+      Data from <a href="https://opencode.ai" rel="noopener noreferrer" target="_blank">opencode.ai</a>
+      and <a href="https://artificialanalysis.ai/" rel="noopener noreferrer" target="_blank">Artificial Analysis</a>.
+      Reuse only with attribution.
     </p>
   </footer>
 
