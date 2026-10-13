@@ -19,15 +19,14 @@ Sources, primary only, never guess:
   entry is missing, mark it "missing" and do not guess.
 
 Role matrix:
-- orchestrator: largest req/5h among models with AA intel >= 38, or the muse-spark
-  special case with no AA data and the largest quota.
+- orchestrator: largest req/5h among models with AA intel >= 38.
 - dev: maximise AA speed times req/5h at AA intel >= 34 and monthly limit >= $30.
 - reviewer: highest AA intel at req/5h >= 1000 in a model family not used by
-  dev or researcher, where a family is the id prefix such as deepseek, mimo or claude.
+  dev or researcher, where a family is the leading letters of the model id.
 - researcher: lowest AA $/Task at req/5h >= 3000, AA intel >= 34, and not the dev model.
 
-Free models longcat-2.5-preview-free and step-5-preview-free are excluded:
-limited-time only, unstable and timeout-prone, no own AA slug.
+Models flagged as free are excluded: limited-time only, unstable and
+timeout-prone, no own AA slug.
 
 Score: compute a combined score per model as the mean of the normalised AA and
 LMArena values, each mapped to 0 to 100. Mark mapped and missing Arena values in

@@ -22,7 +22,7 @@
     <p class="meta-hint" id="meta-hint">
       Prices are in USD per 1M tokens; where context or peak tiering applies the
       base tier is used. <code>req/5h</code> is the docs estimate for the Go plan,
-      not a hard limit. <code>aa_status</code>: ok | partial | mapped_step-5 | no_data.
+      not a hard limit. <code>aa_status</code>: ok | partial | mapped | no_data.
     </p>
   </header>
 
@@ -44,8 +44,7 @@
           </dl>
           <p class="card-reason">
             Many small turns, long sessions: largest req/5h among models with AA
-            intel ≥ 38, or the muse-spark special case with no AA data and the
-            largest quota, plus a high cache discount.
+            intel ≥ 38, plus a high cache discount.
           </p>
         </article>
 
@@ -122,8 +121,7 @@
       <ul class="matrix">
         <li>
           <strong>Orchestrator</strong>: largest <code>req/5h</code> among models
-          with AA intel ≥ 38, or the muse-spark special case with no AA data and the
-          largest quota.
+          with AA intel ≥ 38.
         </li>
         <li>
           <strong>Dev</strong>: maximises AA speed × <code>req/5h</code> at AA intel
@@ -139,9 +137,8 @@
         </li>
       </ul>
       <p class="hint">
-        Families come from the id prefix, such as <code>deepseek-*</code>,
-        <code>mimo-*</code> and <code>claude-*</code>. Missing values are never
-        guessed.
+        Families come from the id prefix: the leading letters of a model id.
+        Missing values are never guessed.
       </p>
 
       <h3>Combined score</h3>
@@ -156,7 +153,7 @@
       <ul class="matrix">
         <li><strong>Limited time:</strong> their continuation is not guaranteed, so no stable recommendation is possible.</li>
         <li><strong>Unstable:</strong> free tiers throttle under load and hit 429s and timeouts.</li>
-        <li><strong>No dedicated AA slug:</strong> no reliable benchmark data, 404. Where mapped, the origin is flagged, such as <code>step-5</code>.</li>
+        <li><strong>No dedicated AA slug:</strong> no reliable benchmark data, 404.</li>
       </ul>
     </section>
 
@@ -176,11 +173,11 @@ Procedure:
 1. For every Go model collect req/5h, monthly limit, in/out/cached prices and AA metrics.
    If the AA page is missing: mark it "no AA data", do not invent anything.
 2. Apply the role matrix:
-   - orchestrator: largest req/5h at AA intel >= 38, or the muse-spark special case with the largest quota and no AA data.
+   - orchestrator: largest req/5h at AA intel >= 38.
    - dev: max of AA speed times req/5h at AA intel >= 34 and monthly limit >= $30.
    - reviewer: highest AA intel at req/5h >= 1000 in a family other than dev or researcher.
    - researcher: lowest AA $/task at req/5h >= 3000, AA intel >= 34, and not the dev model.
-3. Exclude free models longcat-2.5-preview-free and step-5-preview-free: limited time, unstable, no dedicated AA slug.
+3. Exclude models flagged as free: limited time, unstable, no dedicated AA slug.
 4. Output: recommendation table with role, model id, rationale and key numbers, plus the full model table.</pre>
       </div>
     </section>

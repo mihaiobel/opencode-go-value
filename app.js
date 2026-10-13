@@ -11,9 +11,8 @@ const NA = "n/a";
 
 /* ---------- helpers ---------- */
 
-// Family = leading alphabetic run of the model id.
-// "deepseek-v4.1-flash" -> "deepseek", "claude-haiku-5-5" -> "claude",
-// "qwen3.7-plus" -> "qwen", "hy3" -> "hy", "mimo-v2.6-pro" -> "mimo".
+// Family = leading alphabetic run of the model id, so "abc-1.2" -> "abc"
+// and "abc2.1-pro" -> "abc".
 function familyOf(id) {
   const m = /^[a-z]+/.exec(String(id || ""));
   return m ? m[0] : String(id || "");
@@ -87,14 +86,12 @@ function combinedScore(aa, arena) {
 
 /* ---------- role matrix ---------- */
 
-// orchestrator: biggest req/5h among AA-intel >= 38, plus the muse-spark
-// no_data special case, where the biggest quota wins.
+// orchestrator: biggest req/5h among models with AA intel >= 38.
 function pickOrchestrator(models) {
   const pool = models.filter((m) => {
     if (isFree(m)) return false;
     const intel = num(m.aa_intelligence);
-    const isMuse = /^muse-spark/.test(m.id);
-    return intel !== null && intel >= 38 ? true : isMuse;
+    return intel !== null && intel >= 38;
   });
   pool.sort((a, b) => {
     const d = (num(b.requests_per_5h) ?? -1) - (num(a.requests_per_5h) ?? -1);

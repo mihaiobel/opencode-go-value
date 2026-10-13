@@ -5,9 +5,12 @@ the best model per agent role from Go plan quota and Artificial Analysis benchma
 
 - Go plan only, $10/month. Go Plus is ignored.
 - Roles: `orchestrator`, `dev`, `reviewer`, `researcher`.
-- Free models `longcat-2.5-preview-free` and `step-5-preview-free` are excluded:
-  limited-time only, prone to instability and timeouts, no dedicated AA slug.
-  They are never recommended and appear greyed out in the table.
+- Only current model versions are considered; older versions of the same model
+  are ignored.
+- Models flagged as free are excluded: limited-time only, prone to instability
+  and timeouts, no dedicated AA slug. They are never recommended and appear
+  greyed out in the table.
+- A missing AA page is recorded as `aa_status: "no_data"`; nothing is invented.
 
 The recommendation is computed client side in `app.js` from `data/latest.json`.
 See the Role matrix in the Methodology section of the page.
@@ -32,7 +35,6 @@ See the Role matrix in the Methodology section of the page.
 - `https://artificialanalysis.ai/models/<slug>` for Intelligence Index, Cost per Task, output speed.
 - `https://lmarena.ai/leaderboard/text` for the LMArena Overall score, the second benchmark source, as of 2026-10-08.
 
-Missing AA pages are recorded as `aa_status: "no_data"`. Nothing is guessed.
 The page also shows a combined score per model: the mean of the normalised AA
 intelligence and LMArena Overall values, each mapped to 0 to 100. Mapped and
 missing Arena entries are marked in the table.
