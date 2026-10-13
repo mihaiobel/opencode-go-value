@@ -1,43 +1,10 @@
-# Daily-Prompt: opencode-Go-Modellwahl neu bewerten
+# Daily prompt: re-evaluate the opencode Go model choice
 
-Copy-Paste-Prompt für ein **fremdes** opencode-Setup, das dieselbe Rollen-Logik wie
-`opencode-go-value` anwenden will. Täglich ausführbar. Antwort = Empfehlungstabelle.
-
----
-
-## Deutsch
-
-```text
-Werte die opencode-Go-Modelle ($10-Plan, KEIN Go Plus) neu aus und empfiehl je
-Agentenrolle das beste Modell.
-
-Quellen (Primärquellen, nichts erfinden):
-- https://opencode.ai/docs/go/  -> nur die Go-Spalte der Preis- und Requests-Tabellen
-  (nicht Go Plus). Lies req/5h, Monatslimit ($), In/Out/Cached-Preise ($/1M).
-- https://opencode.ai/inference/go/v1/models  -> vollständige Modell-IDs.
-- https://artificialanalysis.ai/models/<slug>  -> Intelligence Index, Cost per Task ($),
-  Output-Speed (t/s). Fehlt die AA-Seite (404): als "keine AA-Daten" markieren, nicht raten.
-
-Rollen-Matrix:
-- orchestrator: größte req/5h unter Modellen mit AA-Intel >= 38
-  (ODER muse-spark-Sonderfall: no_data, aber größte Quota).
-- dev: maximiert (AA-Speed × req/5h) bei AA-Intel >= 34 und Monatslimit >= $30.
-- reviewer: höchster AA-Intel bei req/5h >= 1000 und in einer Modellfamilie, die weder
-  dev noch researcher belegen (Familie = ID-Präfix, z. B. deepseek / mimo / claude).
-- researcher: kleinster AA-$/Task bei req/5h >= 3000, AA-Intel >= 34 und nicht das dev-Modell.
-
-Free-Modelle (longcat-2.5-preview-free, step-5-preview-free) sind ausgeschlossen:
-befristet (limited time), instabil/Timeout-anfällig, kein eigener AA-Slug.
-
-Ausgabe:
-1. Tabelle der Rollen: Rolle | Modell-ID | Begründung | Kernzahlen (req/5h, $/Monat, AA-Intel, AA-Speed, AA-$/Task).
-2. Vollständige Modelltabelle mit allen Go-Modellen; Free-Modelle als "ausgeschlossen" markiert.
-3. Fehlende AA-Daten explizit als "keine AA-Daten" kennzeichnen.
-```
+Copy-paste prompt for a **foreign** opencode setup that wants to apply the same
+role logic as `opencode-go-value`. Runnable daily. The answer is a recommendation
+table.
 
 ---
-
-## English
 
 ```text
 Re-evaluate the opencode Go models ($10 plan, NOT Go Plus) and recommend the best

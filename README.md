@@ -1,84 +1,86 @@
 # opencode-go Value
 
-Statische GitHub-Pages-Seite (Vanilla HTML/CSS/JS, **kein Build-Schritt**), die aus
-Go-Plan-Quota und Artificial-Analysis-Benchmarks die **beste Modellwahl pro Agentenrolle**
-empfiehlt.
+Static GitHub Pages site (vanilla HTML/CSS/JS, **no build step**) that recommends
+the **best model per agent role** from Go plan quota and Artificial Analysis
+benchmarks.
 
-- Nur der **Go-Plan ($10/Monat)** — **Go Plus wird ignoriert**.
-- Rollen: `orchestrator`, `dev`, `reviewer`, `researcher`.
-- **Free-Modelle sind ausgeschlossen** (`longcat-2.5-preview-free`, `step-5-preview-free`):
-  nur befristet verfügbar, instabil/Timeout-anfällig, kein eigener AA-Slug. Sie werden nie
-  empfohlen und stehen in der Tabelle grau.
+- **Go plan only ($10/month)** — **Go Plus is ignored**.
+- Roles: `orchestrator`, `dev`, `reviewer`, `researcher`.
+- **Free models are excluded** (`longcat-2.5-preview-free`, `step-5-preview-free`):
+  available for a limited time only, prone to instability/timeouts, no dedicated AA
+  slug. They are never recommended and appear greyed out in the table.
 
-Die Empfehlung wird clientseitig in `app.js` aus `data/latest.json` berechnet (siehe
-„Rollen-Matrix" im Methodik-Abschnitt der Seite).
+The recommendation is computed client-side in `app.js` from `data/latest.json`
+(see the "Role matrix" in the Methodology section of the page).
 
-## Dateien
+## Files
 
-| Datei | Zweck |
+| File | Purpose |
 |---|---|
-| `index.html` | einzige Seite: Rollen-Cards, sortierbare Gesamt-Tabelle, Methodik, Quellen, Copy-Button |
-| `app.js` | lädt `data/latest.json`, berechnet Rollen-Empfehlung, rendert Tabelle (sortierbar) |
-| `styles.css` | schlichtes Dark-Theme, mobil lesbar, keine externen Abhängigkeiten |
-| `data/latest.json` | Meta + Modelldaten (Stand im Meta) |
-| `scripts/fetch_go.py` | Aktualisiert das JSON aus den Go-Docs (nur Stdlib) |
-| `.github/workflows/update-data.yml` | täglicher Cron (06:00 UTC): Daten aktualisieren + committen |
-| `.github/workflows/pages.yml` | GitHub-Pages-Deploy |
-| `refresh-prompt.md` | Copy-Paste-Prompt (DE/EN) für fremde opencode-Setups |
+| `index.html` | single page: role cards, sortable full table, methodology, sources, copy button |
+| `app.js` | loads `data/latest.json`, computes the role recommendation, renders the sortable table |
+| `styles.css` | plain dark theme, mobile readable, no external dependencies |
+| `data/latest.json` | meta + model data (as-of date in the meta) |
+| `scripts/fetch_go.py` | updates the JSON from the Go docs (stdlib only) |
+| `.github/workflows/update-data.yml` | daily cron (06:00 UTC): refresh data + commit |
+| `.github/workflows/pages.yml` | GitHub Pages deploy |
+| `refresh-prompt.md` | copy-paste prompt (EN) for foreign opencode setups |
 
-## Datenquellen
+## Data sources
 
-- `https://opencode.ai/docs/go/` — Go-Plan-Preise, Monatslimits, geschätzte `req/5h`.
-- `https://opencode.ai/inference/go/v1/models` — vollständige Modell-IDs.
-- `https://artificialanalysis.ai/models/<slug>` — Intelligence Index, Cost per Task, Output-Speed.
+- `https://opencode.ai/docs/go/` — Go plan prices, monthly limits, estimated `req/5h`.
+- `https://opencode.ai/inference/go/v1/models` — full model ids.
+- `https://artificialanalysis.ai/models/<slug>` — Intelligence Index, Cost per Task, output speed.
 
-Fehlende AA-Seiten werden als `aa_status: "no_data"` geführt — es wird **nichts geraten**.
+Missing AA pages are recorded as `aa_status: "no_data"` — **nothing is guessed**.
+The Sources section of the page shows only the two canonical root domains
+(`https://opencode.ai` and `https://artificialanalysis.ai`).
 
-## Update-Ablauf
+## Update flow
 
-1. `scripts/fetch_go.py` lädt die Go-Docs und den Models-Endpoint, parst **nur** die
-   Go-Tabellen (`data-plan-panel="go"`, nicht `go-plus`).
-2. AA-Werte werden per Modell-ID aus dem vorhandenen `data/latest.json` übernommen.
-   **Neue** Modelle bekommen `aa_status: "no_data"` (AA-Werte bleiben `null`).
-3. Ausgabe des aktualisierten JSON auf **stdout**:
+1. `scripts/fetch_go.py` fetches the Go docs and the models endpoint and parses
+   **only** the Go tables (`data-plan-panel="go"`, not `go-plus`).
+2. AA values are carried over per model id from the existing `data/latest.json`.
+   **New** models get `aa_status: "no_data"` (AA values stay `null`).
+3. The updated JSON is written to **stdout**:
 
    ```bash
    python3 scripts/fetch_go.py --data data/latest.json > data/latest.json.tmp
-   python3 -m json.tool data/latest.json.tmp > /dev/null   # validieren
+   python3 -m json.tool data/latest.json.tmp > /dev/null   # validate
    mv data/latest.json.tmp data/latest.json
    ```
 
-4. `.github/workflows/update-data.yml` macht das täglich um 06:00 UTC und committet
-   `data/latest.json` nur bei Änderung (Stand-Datum im Meta wird mitgeschrieben).
+4. `.github/workflows/update-data.yml` does this daily at 06:00 UTC and commits
+   `data/latest.json` only when it changed (the as-of date in the meta is written along).
 
-Hilfe und Optionen:
+Help and options:
 
 ```bash
 python3 scripts/fetch_go.py --help
 ```
 
-## Lokal testen
+## Test locally
 
 ```bash
 cd opencode-go-value
 python3 -m http.server 8000
-# dann http://localhost:8000/ im Browser öffnen
+# then open http://localhost:8000/ in a browser
 ```
 
-Es werden keine externen Requests abgesetzt; `data/latest.json` wird per
-Same-Origin-`fetch` geladen.
+No external requests are made; `data/latest.json` is loaded via a same-origin
+`fetch`.
 
-## GitHub Pages aktivieren
+## Enable GitHub Pages
 
-1. Repository auf GitHub pushen (Branch `main`).
-2. **Settings → Pages → Build and deployment** auf **GitHub Actions** stellen.
-3. `.github/workflows/pages.yml` deployt die Seite bei jedem Push auf `main`
+1. Push the repository to GitHub (branch `main`).
+2. Set **Settings → Pages → Build and deployment** to **GitHub Actions**.
+3. `.github/workflows/pages.yml` deploys the site on every push to `main`
    (`actions/upload-pages-artifact` + `actions/deploy-pages`).
-4. Für automatische Daten-Updates: **Settings → Actions → General → Workflow permissions**
-   auf *Read and write* (der Commit-Step braucht Schreibrechte).
+4. For automatic data updates: set **Settings → Actions → General → Workflow permissions**
+   to *Read and write* (the commit step needs write access).
 
-## Lizenz-Hinweis
+## License note
 
-Die **Daten** stammen von [opencode.ai](https://opencode.ai/docs/go/) und
-[Artificial Analysis](https://artificialanalysis.ai/) und dürfen nur **mit Quellenangabe**
-weiterverwendet werden. Der Seiten-Code selbst steht unter der MIT-Lizenz.
+The **data** comes from [opencode.ai](https://opencode.ai/docs/go/) and
+[Artificial Analysis](https://artificialanalysis.ai/) and may be reused only **with
+attribution**. The site code itself is under the MIT license.

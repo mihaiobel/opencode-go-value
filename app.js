@@ -1,6 +1,6 @@
 /* opencode-go Value – client-side role recommendation and sortable table.
  * Loads ./data/latest.json (same origin, no external requests) and applies the
- * role matrix documented in the Methodik section of index.html.
+ * role matrix documented in the Methodology section of index.html.
  */
 "use strict";
 
@@ -147,36 +147,13 @@ function recommend(models) {
   return { orchestrator, dev, reviewer, researcher };
 }
 
-/* ---------- rendering ---------- */
-
-const ROLE_META = {
-  orchestrator: {
-    label: "Orchestrator",
-    reason:
-      "Viele kleine Turns und lange, repetitive Sessions: größte req/5h bei AA-Intel ≥ 38 (bzw. muse-spark als no_data-Sonderfall mit der größten Quota) plus hoher Cache-Rabatt.",
-  },
-  dev: {
-    label: "Dev",
-    reason:
-      "Meiste Calls pro Task: maximiert Speed × req/5h bei AA-Intel ≥ 34 und Monatslimit ≥ $30 — Frequenz schlägt Spitze.",
-  },
-  reviewer: {
-    label: "Reviewer",
-    reason:
-      "~1 Call/Task, lange Reports: höchster AA-Intel in einer Familie, die weder Dev noch Researcher nutzt (unkorrelierte Fehler), req/5h ≥ 1000.",
-  },
-  researcher: {
-    label: "Researcher",
-    reason:
-      "Nur Lesen, darf keine Dev-Quota verbrennen: günstigster AA-$/Task bei req/5h ≥ 3000 und brauchbarer Intelligenz (≥ 34), nicht das Dev-Modell.",
-  },
-};
+/* ---------- formatting ---------- */
 
 function fmtNum(v, digits) {
   if (v === null || v === undefined) return "–";
   const n = Number(v);
   if (!isFinite(n)) return "–";
-  return n.toLocaleString("de-DE", {
+  return n.toLocaleString("en-US", {
     minimumFractionDigits: digits ?? 0,
     maximumFractionDigits: digits ?? 0,
   });
@@ -186,91 +163,56 @@ function fmtUsd(v, digits) {
   if (v === null || v === undefined) return "–";
   const n = Number(v);
   if (!isFinite(n)) return "–";
-  return "$" + n.toLocaleString("de-DE", {
+  return "$" + n.toLocaleString("en-US", {
     minimumFractionDigits: digits ?? 0,
     maximumFractionDigits: Math.max(digits ?? 0, 4),
   });
 }
 
-function metricRow(label, value) {
-  const span = document.createElement("span");
-  span.className = "metric";
-  const l = document.createElement("span");
-  l.className = "metric-label";
-  l.textContent = label;
-  const v = document.createElement("span");
-  v.className = "metric-value";
-  v.textContent = value;
-  span.append(l, v);
-  return span;
-}
+/* ---------- role cards ---------- */
 
-function roleCard(roleKey, model) {
-  const meta = ROLE_META[roleKey];
-  const card = document.createElement("article");
-  card.className = "card";
-  card.dataset.role = roleKey;
-
-  const h = document.createElement("h3");
-  h.textContent = meta.label;
-  card.append(h);
-
+function fillRoleCard(card, model) {
+  const field = (name) => card.querySelector('[data-field="' + name + '"]');
+  const modelLine = field("model");
   if (!model) {
-    const p = document.createElement("p");
-    p.className = "card-warning";
-    p.textContent =
-      "Kein Modell erfüllt die Kriterien dieser Rolle. Matrix prüfen oder Daten aktualisieren.";
-    card.append(p);
-    return card;
+    card.classList.add("card-empty");
+    if (modelLine) {
+      modelLine.textContent =
+        "No model meets this role's criteria. Check the matrix or update the data.";
+    }
+    return;
   }
-
-  const mid = document.createElement("p");
-  mid.className = "card-model";
-  mid.textContent = model.id;
-  card.append(mid);
-
-  const metrics = document.createElement("div");
-  metrics.className = "metrics";
-  metrics.append(
-    metricRow("req/5h", fmtNum(model.requests_per_5h)),
-    metricRow("$/Monat", fmtUsd(model.monthly_limit_usd, 0)),
-    metricRow("AA-Intel", fmtNum(model.aa_intelligence)),
-    metricRow("AA-Speed", model.aa_speed_tps == null ? "–" : fmtNum(model.aa_speed_tps, 1) + " t/s"),
-    metricRow("AA-$/Task", fmtUsd(model.aa_cost_per_task, 2)),
-    metricRow("AA-Status", model.aa_status || "–")
-  );
-  card.append(metrics);
-
-  const why = document.createElement("p");
-  why.className = "card-reason";
-  why.textContent = meta.reason;
-  card.append(why);
-
-  return card;
+  card.classList.remove("card-empty");
+  if (modelLine) modelLine.textContent = model.id;
+  field("req").textContent = fmtNum(model.requests_per_5h);
+  field("month").textContent = fmtUsd(model.monthly_limit_usd, 0);
+  field("intel").textContent = fmtNum(model.aa_intelligence);
+  field("speed").textContent =
+    model.aa_speed_tps == null ? "–" : fmtNum(model.aa_speed_tps, 1) + " t/s";
+  field("cost").textContent = fmtUsd(model.aa_cost_per_task, 2);
+  field("status").textContent = model.aa_status || "–";
 }
 
 function renderRoles(reco) {
-  const host = document.getElementById("role-cards");
-  if (!host) return;
-  host.textContent = "";
-  for (const key of ["orchestrator", "dev", "reviewer", "researcher"]) {
-    host.append(roleCard(key, reco[key]));
+  const cards = document.querySelectorAll("#role-cards .card[data-role]");
+  for (const card of cards) {
+    fillRoleCard(card, reco[card.dataset.role]);
   }
 }
 
 /* ---------- sortable table ---------- */
 
 const COLUMNS = [
-  { key: "id", label: "Modell", type: "text", cell: (m) => m.id },
-  { key: "monthly_limit_usd", label: "$/Monat", type: "num", cell: (m) => m.monthly_limit_usd },
+  { key: "id", label: "Model", type: "text", cell: (m) => m.id },
+  { key: "monthly_limit_usd", label: "$/month", type: "num", cell: (m) => m.monthly_limit_usd },
   { key: "requests_per_5h", label: "req/5h", type: "num", cell: (m) => m.requests_per_5h },
   { key: "price_in", label: "In $/1M", type: "num", cell: (m) => m.price_in },
   { key: "price_out", label: "Out $/1M", type: "num", cell: (m) => m.price_out },
   { key: "price_cached", label: "Cached $/1M", type: "num", cell: (m) => m.price_cached },
-  { key: "aa_intelligence", label: "AA-Intel", type: "num", cell: (m) => m.aa_intelligence },
-  { key: "aa_speed_tps", label: "AA-Speed", type: "num", cell: (m) => m.aa_speed_tps },
-  { key: "aa_cost_per_task", label: "AA-$/Task", type: "num", cell: (m) => m.aa_cost_per_task },
-  { key: "aa_status", label: "AA-Status", type: "text", cell: (m) => m.aa_status || "" },
+  { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
+  { key: "aa_speed_tps", label: "AA speed", type: "num", cell: (m) => m.aa_speed_tps },
+  { key: "aa_cost_per_task", label: "AA $/task", type: "num", cell: (m) => m.aa_cost_per_task },
+  { key: "aa_status", label: "AA status", type: "text", cell: (m) => m.aa_status || "" },
 ];
 
 let sortState = { key: "aa_intelligence", dir: -1 };
@@ -355,7 +297,6 @@ function renderTable(models, reco) {
     if (isFree(m) || m.aa_status === "no_data") tr.classList.add("muted");
     if (isFree(m)) tr.classList.add("free-excluded");
     if (recommended.has(m.id)) tr.classList.add("recommended-row");
-    if (m.excluded_reason) tr.title = m.excluded_reason;
 
     COLUMNS.forEach((col, idx) => {
       const td = document.createElement("td");
@@ -365,14 +306,15 @@ function renderTable(models, reco) {
         if (recommended.has(m.id)) {
           const badge = document.createElement("span");
           badge.className = "badge";
-          badge.textContent = "empfohlen";
+          badge.textContent = "recommended";
           td.append(" ", badge);
         }
         if (isFree(m)) {
           const tag = document.createElement("span");
           tag.className = "badge badge-free";
-          tag.textContent = "free – ausgeschlossen";
-          if (m.excluded_reason) tag.title = m.excluded_reason;
+          tag.textContent = "free – excluded";
+          tag.title =
+            "Free model: limited-time availability, prone to instability/timeouts, no dedicated AA slug.";
           td.append(" ", tag);
         }
       }
@@ -392,18 +334,34 @@ function renderMeta(meta) {
   if (plan) plan.textContent = meta.plan || "opencode-go";
   const aav = document.getElementById("aa-version");
   if (aav) aav.textContent = meta.aa_index_version || "–";
-  const note = document.getElementById("meta-hint");
-  if (note && Array.isArray(meta.hinweise)) {
-    note.textContent = meta.hinweise.join(" ");
-  }
+  // The header hint is static English in index.html; the data's own notes are
+  // not surfaced, keeping the visible UI in one language.
 }
+
+// The data lists many deep links (opencode docs/models pages, one AA page per
+// model). The Sources section shows only the two canonical root domains.
+const SOURCE_ROOTS = ["opencode.ai", "artificialanalysis.ai"];
 
 function renderSources(meta) {
   const host = document.getElementById("sources-list");
   if (!host) return;
   host.textContent = "";
   const urls = Array.isArray(meta.quellen_urls) ? meta.quellen_urls : [];
-  for (const url of urls) {
+  const seen = new Set();
+  const roots = [];
+  for (const raw of urls) {
+    let hostname = "";
+    try {
+      hostname = new URL(raw).hostname.replace(/^www\./, "");
+    } catch (err) {
+      continue;
+    }
+    if (!SOURCE_ROOTS.includes(hostname) || seen.has(hostname)) continue;
+    seen.add(hostname);
+    roots.push(hostname);
+  }
+  for (const root of (roots.length ? roots : SOURCE_ROOTS)) {
+    const url = "https://" + root;
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = url;
@@ -419,11 +377,12 @@ function wireCopy() {
   const btn = document.getElementById("copy-prompt");
   const src = document.getElementById("daily-prompt");
   if (!btn || !src) return;
+  const label = btn.textContent;
   btn.addEventListener("click", async () => {
     const text = src.textContent.trim();
     try {
       await navigator.clipboard.writeText(text);
-      btn.textContent = "Kopiert ✓";
+      btn.textContent = "Copied ✓";
     } catch (err) {
       // Fallback for non-secure contexts / older browsers.
       const ta = document.createElement("textarea");
@@ -434,17 +393,27 @@ function wireCopy() {
       ta.select();
       try {
         document.execCommand("copy");
-        btn.textContent = "Kopiert ✓";
+        btn.textContent = "Copied ✓";
       } catch (e2) {
-        btn.textContent = "Kopieren fehlgeschlagen";
+        btn.textContent = "Copy failed";
       }
       ta.remove();
     }
-    setTimeout(() => (btn.textContent = "Daily-Prompt kopieren"), 2000);
+    setTimeout(() => (btn.textContent = label), 2000);
   });
 }
 
 /* ---------- bootstrap ---------- */
+
+function showLoadError(message) {
+  const host = document.getElementById("role-cards");
+  if (!host) return;
+  for (const card of host.querySelectorAll(".card[data-role]")) {
+    card.classList.add("card-empty");
+    const line = card.querySelector('[data-field="model"]');
+    if (line) line.textContent = message;
+  }
+}
 
 async function init() {
   wireCopy();
@@ -454,13 +423,7 @@ async function init() {
     if (!res.ok) throw new Error("HTTP " + res.status);
     payload = await res.json();
   } catch (err) {
-    const host = document.getElementById("role-cards");
-    if (host) {
-      const p = document.createElement("p");
-      p.className = "card-warning";
-      p.textContent = "Daten konnten nicht geladen werden (" + err.message + ").";
-      host.append(p);
-    }
+    showLoadError("Data could not be loaded (" + err.message + ").");
     return;
   }
 
