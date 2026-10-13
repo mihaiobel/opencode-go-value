@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>opencode-go Value – beste Modellwahl pro Agentenrolle</title>
+  <meta name="description" content="Empfiehlt die beste opencode-Go-Modellwahl je Agentenrolle (Orchestrator, Dev, Reviewer, Researcher) aus Go-Plan-Quota und Artificial-Analysis-Benchmarks." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>opencode-go Value</h1>
+    <p class="subtitle">
+      Beste Modellwahl pro Agentenrolle aus Go-Plan-Quota ($10, <strong>kein</strong> Go Plus)
+      und Artificial-Analysis-Benchmarks.
+    </p>
+    <p class="meta-line">
+      Stand: <span id="stand-date">–</span> ·
+      Plan: <span id="plan-name">opencode-go ($10/month)</span> ·
+      AA-Index: <span id="aa-version">–</span>
+    </p>
+    <p class="meta-hint" id="meta-hint"></p>
+  </header>
+
+  <main>
+    <section aria-labelledby="roles-heading">
+      <h2 id="roles-heading">Rollen-Empfehlung</h2>
+      <div id="role-cards" class="cards">
+        <p class="loading">Lade Empfehlung …</p>
+      </div>
+      <p class="free-note">
+        <strong>Free-Modelle sind ausgeschlossen.</strong>
+        <code>longcat-2.5-preview-free</code> und <code>step-5-preview-free</code> sind nur
+        <em>befristet</em> verfügbar (limited time), zeitweise instabil/Timeout-anfällig und
+        haben keinen eigenen AA-Slug — sie werden nie empfohlen und stehen in der Tabelle grau.
+      </p>
+    </section>
+
+    <section aria-labelledby="table-heading">
+      <h2 id="table-heading">Alle Modelle</h2>
+      <p class="hint">Spaltenkopf klicken zum Sortieren. Grau = keine AA-Daten; „free“ = ausgeschlossen.</p>
+      <div class="table-wrap">
+        <table id="models-table" class="models">
+          <tbody><tr><td class="loading">Lade Modelle …</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="methodik-heading">
+      <h2 id="methodik-heading">Methodik</h2>
+      <h3>Rollen-Matrix</h3>
+      <ul class="matrix">
+        <li>
+          <strong>Orchestrator</strong> — größte <code>req/5h</code> unter Modellen mit
+          AA-Intel ≥ 38, <em>oder</em> der muse-spark-Sonderfall (<code>no_data</code>, aber
+          größte Quota). Viele kleine Turns, Cache-Rabatt zählt.
+        </li>
+        <li>
+          <strong>Dev</strong> — maximiert <code>AA-Speed × req/5h</code> bei AA-Intel ≥ 34
+          und Monatslimit ≥ $30. Frequenz schlägt Spitze.
+        </li>
+        <li>
+          <strong>Reviewer</strong> — höchster AA-Intel bei <code>req/5h ≥ 1000</code> und in
+          einer Modellfamilie, die weder Dev noch Researcher belegen (unkorrelierte Fehler).
+        </li>
+        <li>
+          <strong>Researcher</strong> — kleinster AA-$/Task bei <code>req/5h ≥ 3000</code>,
+          brauchbarer Intelligenz (≥ 34) und nicht das Dev-Modell.
+        </li>
+      </ul>
+
+      <h3>Free-Ausschluss</h3>
+      <p>
+        Free-Modelle sind grundsätzlich nicht empfehlbar:
+      </p>
+      <ul class="matrix">
+        <li><strong>Befristet / limited time:</strong> ihr Fortbestand ist nicht garantiert — keine stabile Best-Value-Empfehlung möglich.</li>
+        <li><strong>Timeouts / instabil:</strong> Free-Tiers werden bei Last gedrosselt (Rate-Limits, 429/Timeouts).</li>
+        <li><strong>Keine eigenen AA-Slugs:</strong> kein belastbarer Benchmark-Datensatz (404). Wo gemappt, ist die Herkunft gekennzeichnet (z.&nbsp;B. <code>step-5</code>).</li>
+      </ul>
+      <p class="hint">
+        Zuordnung zu Familien erfolgt über das ID-Präfix (z.&nbsp;B. <code>deepseek-*</code>,
+        <code>mimo-*</code>, <code>claude-*</code>). Fehlende Werte werden nie geraten.
+      </p>
+    </section>
+
+    <section aria-labelledby="prompt-heading">
+      <h2 id="prompt-heading">Daily-Prompt</h2>
+      <p class="hint">Für fremde opencode-Setups: kopieren und täglich zur Neubewertung ausführen.</p>
+      <div class="prompt-box">
+        <button id="copy-prompt" type="button">Daily-Prompt kopieren</button>
+        <pre id="daily-prompt">Werte die opencode-Go-Modelle ($10-Plan, KEIN Go Plus) neu aus.
+
+Quellen:
+- <a href="https://opencode.ai/docs/go/">https://opencode.ai/docs/go/</a>  (Go-Spalte der Preis- und Requests-Tabellen)
+- <a href="https://opencode.ai/inference/go/v1/models">https://opencode.ai/inference/go/v1/models</a>  (Modell-IDs)
+- <a href="https://artificialanalysis.ai/models/&lt;slug&gt;">https://artificialanalysis.ai/models/&lt;slug&gt;</a>  (Intel Index, $/Task, Speed)
+
+Vorgehen:
+1. Für jedes Go-Modell req/5h, Monatslimit, In/Out/Cached-Preise und AA-Kennzahlen sammeln.
+   Fehlt die AA-Seite: als "keine AA-Daten" markieren, nichts erfinden.
+2. Rollen-Matrix anwenden:
+   - orchestrator: größte req/5h bei AA-Intel >= 38 (oder muse-spark-Sonderfall: größte Quota, no_data).
+   - dev: max(AA-Speed × req/5h) bei AA-Intel >= 34 und Monatslimit >= $30.
+   - reviewer: höchster AA-Intel bei req/5h >= 1000 in anderer Familie als dev/researcher.
+   - researcher: kleinster AA-$/Task bei req/5h >= 3000, AA-Intel >= 34, nicht das dev-Modell.
+3. Free-Modelle (longcat-2.5-preview-free, step-5-preview-free) ausschließen (befristet, instabil, kein eigener AA-Slug).
+4. Ausgabe: Empfehlung als Tabelle (Rolle | Modell-ID | Begründung | Kernzahlen) + vollständige Modelltabelle.</pre>
+      </div>
+    </section>
+
+    <section aria-labelledby="sources-heading">
+      <h2 id="sources-heading">Quellen</h2>
+      <ul id="sources-list" class="sources">
+        <li><a href="https://opencode.ai/docs/go/" rel="noopener noreferrer" target="_blank">https://opencode.ai/docs/go/</a></li>
+        <li><a href="https://artificialanalysis.ai/" rel="noopener noreferrer" target="_blank">https://artificialanalysis.ai/</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      Statische Seite ohne Build-Schritt und ohne externe Requests.
+      Daten: <a href="https://opencode.ai/docs/go/" rel="noopener noreferrer" target="_blank">opencode.ai</a>
+      &amp; <a href="https://artificialanalysis.ai/" rel="noopener noreferrer" target="_blank">Artificial Analysis</a> —
+      Nutzung nur mit Quellenangabe.
+    </p>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
