@@ -1,6 +1,6 @@
 /* opencode-go Value: client-side role recommendation and sortable table.
  * Loads ./data/latest.json (same origin, no external requests) and applies the
- * role matrix documented in the Methodology section of index.html.
+ * role matrix documented in the collapsed notes of index.html.
  */
 "use strict";
 
@@ -33,20 +33,6 @@ function maxBy(items, score) {
     const s = score(it);
     if (s === null || !isFinite(s)) continue;
     if (s > bestScore) {
-      bestScore = s;
-      best = it;
-    }
-  }
-  return best;
-}
-
-function minBy(items, score) {
-  let best = null;
-  let bestScore = Infinity;
-  for (const it of items) {
-    const s = score(it);
-    if (s === null || !isFinite(s)) continue;
-    if (s < bestScore) {
       bestScore = s;
       best = it;
     }
@@ -199,25 +185,24 @@ function fmtUsd(v, digits) {
 
 function fillRoleCard(card, model) {
   const field = (name) => card.querySelector('[data-field="' + name + '"]');
+  // The slim cards carry model, score, req, month and intel. set() tolerates
+  // a field being absent so the markup can stay lean.
+  const set = (name, text) => {
+    const el = field(name);
+    if (el) el.textContent = text;
+  };
   const modelLine = field("model");
   if (!model) {
     card.classList.add("card-empty");
-    if (modelLine) {
-      modelLine.textContent =
-        "No model meets this role's criteria. Check the matrix or update the data.";
-    }
+    if (modelLine) modelLine.textContent = "No model meets this role's criteria.";
     return;
   }
   card.classList.remove("card-empty");
   if (modelLine) modelLine.textContent = model.id;
-  field("req").textContent = fmtNum(model.requests_per_5h);
-  field("month").textContent = fmtUsd(model.monthly_limit_usd, 0);
-  field("intel").textContent = fmtNum(model.aa_intelligence);
-  field("speed").textContent =
-    model.aa_speed_tps == null ? NA : fmtNum(model.aa_speed_tps, 1) + " t/s";
-  field("cost").textContent = fmtUsd(model.aa_cost_per_task, 2);
-  field("status").textContent = model.aa_status || NA;
-  field("score").textContent = fmtNum(combinedScore(model.aa_intelligence, model.bench2_score), 1);
+  set("score", fmtNum(combinedScore(model.aa_intelligence, model.bench2_score), 1));
+  set("req", fmtNum(model.requests_per_5h));
+  set("month", fmtUsd(model.monthly_limit_usd, 0));
+  set("intel", fmtNum(model.aa_intelligence));
 }
 
 function renderRoles(reco) {
@@ -229,19 +214,14 @@ function renderRoles(reco) {
 
 /* ---------- sortable table ---------- */
 
+// Only the columns that drive a decision. The collapsed notes in index.html
+// document the rest of the data.
 const COLUMNS = [
   { key: "id", label: "Model", type: "text", cell: (m) => m.id },
-  { key: "monthly_limit_usd", label: "$/month", type: "num", cell: (m) => m.monthly_limit_usd },
-  { key: "requests_per_5h", label: "req/5h", type: "num", cell: (m) => m.requests_per_5h },
-  { key: "price_in", label: "In $/1M", type: "num", cell: (m) => m.price_in },
-  { key: "price_out", label: "Out $/1M", type: "num", cell: (m) => m.price_out },
-  { key: "price_cached", label: "Cached $/1M", type: "num", cell: (m) => m.price_cached },
-  { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
-  { key: "aa_speed_tps", label: "AA speed", type: "num", cell: (m) => m.aa_speed_tps },
-  { key: "aa_cost_per_task", label: "AA $/task", type: "num", cell: (m) => m.aa_cost_per_task },
-  { key: "aa_status", label: "AA status", type: "text", cell: (m) => m.aa_status || "" },
-  { key: "bench2_score", label: "Arena", type: "num", cell: (m) => m.bench2_score },
   { key: "score", label: "Score", type: "num", cell: (m) => combinedScore(m.aa_intelligence, m.bench2_score) },
+  { key: "requests_per_5h", label: "req/5h", type: "num", cell: (m) => m.requests_per_5h },
+  { key: "monthly_limit_usd", label: "$/month", type: "num", cell: (m) => m.monthly_limit_usd },
+  { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
 ];
 
 let sortState = { key: "aa_intelligence", dir: -1 };
@@ -252,17 +232,6 @@ function fmtCell(col, m) {
   switch (col.key) {
     case "monthly_limit_usd":
       return fmtUsd(raw, 0);
-    case "price_in":
-    case "price_out":
-    case "price_cached":
-      return fmtUsd(raw, raw != null && Math.abs(raw) < 1 ? 3 : 2);
-    case "aa_speed_tps":
-      return raw == null ? NA : fmtNum(raw, 1);
-    case "aa_cost_per_task":
-      return fmtUsd(raw, 2);
-    case "bench2_score":
-      if (m.bench2_status === "missing") return NA;
-      return fmtNum(raw, 2) + (m.bench2_status === "mapped" ? " *" : "");
     case "score":
       return fmtNum(raw, 1);
     default:
@@ -336,9 +305,6 @@ function renderTable(models, reco) {
       const td = document.createElement("td");
       td.textContent = fmtCell(col, m);
       if (col.type === "num") td.classList.add("num");
-      if (col.key === "bench2_score" && m.bench2_status === "mapped") {
-        td.title = "mapped from a sibling model";
-      }
       if (idx === 0) {
         if (recommended.has(m.id)) {
           const badge = document.createElement("span");
@@ -376,12 +342,10 @@ function renderMeta(meta) {
   }
   const aav = document.getElementById("aa-version");
   if (aav) aav.textContent = meta.aa_index_version || NA;
-  // The header hint is static English in index.html; the data's own notes are
-  // not surfaced, keeping the visible UI in one language.
 }
 
 // The data lists many deep links: opencode docs and models pages, and one AA
-// page per model. The Sources section shows only the two canonical root domains.
+// page per model. The Sources line shows only the two canonical root domains.
 const SOURCE_ROOTS = ["opencode.ai", "artificialanalysis.ai"];
 
 function renderSources(meta) {
@@ -478,8 +442,11 @@ async function init() {
   renderTable(models, reco);
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
+// Browser only. In node the file can be loaded to re-run the role logic.
+if (typeof document !== "undefined") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 }

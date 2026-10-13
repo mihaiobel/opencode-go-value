@@ -22,7 +22,7 @@ Role matrix:
 - orchestrator: largest req/5h among models with AA intel >= 38.
 - dev: maximise AA speed times req/5h at AA intel >= 34 and monthly limit >= $30.
 - reviewer: highest AA intel at req/5h >= 1000 in a model family not used by
-  dev or researcher, where a family is the leading letters of the model id.
+  orchestrator, dev or researcher, where a family is the leading letters of the model id.
 - researcher: lowest AA $/Task at req/5h >= 3000, AA intel >= 34, and not the dev model.
 
 Models flagged as free are excluded: limited-time only, unstable and
