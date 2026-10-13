@@ -4,31 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>opencode-go Value: best model per agent role</title>
-  <meta name="description" content="Recommends the best opencode Go model per agent role from plan quota and Artificial Analysis benchmarks." />
+  <meta name="description" content="Picks the best opencode Go model for each agent role, from plan quota and public benchmarks." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header class="site-header">
     <h1>opencode-go Value</h1>
     <p class="subtitle">
-      Best opencode Go model per agent role, from plan quota and Artificial
-      Analysis benchmarks. Go plan only, $10/month; Go Plus is ignored.
+      One model per agent role. The picks weigh the Go plan quota against two
+      public benchmarks. Only the $10 Go plan counts. The Plus plan is ignored.
     </p>
     <p class="meta-line">
-      As of: <span id="stand-date">n/a</span> ·
-      Plan: <span id="plan-name">opencode-go, $10/month</span> ·
-      AA index: <span id="aa-version">n/a</span>
+      <span class="chip">As of <span id="stand-date">n/a</span></span>
+      <span class="chip">Plan <span id="plan-name">opencode-go, $10/month</span></span>
+      <span class="chip">AA index <span id="aa-version">n/a</span></span>
     </p>
     <p class="meta-hint" id="meta-hint">
-      Prices are in USD per 1M tokens; where context or peak tiering applies the
-      base tier is used. <code>req/5h</code> is the docs estimate for the Go plan,
-      not a hard limit. <code>aa_status</code>: ok | partial | mapped | no_data.
+      Prices are USD per 1M tokens. Where a model has tiers, the base tier
+      counts. <code>req/5h</code> is the estimate from the docs, not a hard
+      limit. <code>aa_status</code> is ok, partial, mapped or no_data.
     </p>
   </header>
 
   <main>
     <section aria-labelledby="roles-heading">
-      <h2 id="roles-heading">Role recommendation</h2>
+      <h2 id="roles-heading">Picks by role</h2>
       <div id="role-cards" class="cards">
         <article class="card" data-role="orchestrator">
           <h3 class="card-role">Orchestrator</h3>
@@ -43,8 +43,8 @@
             <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            Many small turns, long sessions: largest req/5h among models with AA
-            intel ≥ 38, plus a high cache discount.
+            Many small turns over long sessions. So it gets the largest req/5h
+            of all models with AA intel ≥ 38. A high cache discount helps too.
           </p>
         </article>
 
@@ -61,8 +61,9 @@
             <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            Most calls per task: maximises AA speed × req/5h at AA intel ≥ 34 and a
-            monthly limit ≥ $30. Frequency beats peak.
+            Runs the most calls per task. The pick maximises AA speed times
+            req/5h, at AA intel ≥ 34 and a monthly limit of at least $30.
+            Frequency beats peak.
           </p>
         </article>
 
@@ -79,9 +80,9 @@
             <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            About one call per task, long reports: highest AA intel at req/5h ≥ 1000
-            in a family that neither Dev nor Researcher uses, so failures stay
-            uncorrelated.
+            About one call per task, then a long report. Highest AA intel at
+            req/5h ≥ 1000. Comes from a family the other roles do not use, so
+            one outage never hits all roles.
           </p>
         </article>
 
@@ -98,8 +99,9 @@
             <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
-            Read-only, must not burn Dev quota: cheapest AA $/task at req/5h ≥ 3000,
-            usable intelligence of 34 or more, and not the Dev model.
+            Reads a lot, writes little. Cheapest AA $/task at req/5h ≥ 3000
+            and AA intel ≥ 34. Never the Dev model, so coding keeps its full
+            quota.
           </p>
         </article>
       </div>
@@ -107,10 +109,10 @@
 
     <section aria-labelledby="table-heading">
       <h2 id="table-heading">All models</h2>
-      <p class="hint">Click a column header to sort. Grey means no AA data; free models are excluded.</p>
+      <p class="hint">Click a column header to sort. Grey means no AA data. Free models stay listed but never get picked.</p>
       <div class="table-wrap">
         <table id="models-table" class="models">
-          <tbody><tr><td class="loading">Loading models.</td></tr></tbody>
+          <tbody><tr><td class="loading">JavaScript builds this table from the local data.</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -120,48 +122,48 @@
       <h3>Role matrix</h3>
       <ul class="matrix">
         <li>
-          <strong>Orchestrator</strong>: largest <code>req/5h</code> among models
-          with AA intel ≥ 38.
+          <strong>Orchestrator</strong>: largest <code>req/5h</code> among
+          models with AA intel ≥ 38.
         </li>
         <li>
-          <strong>Dev</strong>: maximises AA speed × <code>req/5h</code> at AA intel
-          ≥ 34 and a monthly limit ≥ $30.
+          <strong>Dev</strong>: maximises AA speed times <code>req/5h</code>,
+          at AA intel ≥ 34 and a monthly limit of at least $30.
         </li>
         <li>
-          <strong>Reviewer</strong>: highest AA intel at <code>req/5h ≥ 1000</code>
-          in a family that neither Dev nor Researcher occupies.
+          <strong>Reviewer</strong>: highest AA intel at <code>req/5h ≥ 1000</code>,
+          in a family no other role uses.
         </li>
         <li>
-          <strong>Researcher</strong>: cheapest AA $/task at <code>req/5h ≥ 3000</code>,
-          usable intelligence of 34 or more, and not the Dev model.
+          <strong>Researcher</strong>: cheapest AA $/task at <code>req/5h ≥ 3000</code>
+          and AA intel ≥ 34, and never the Dev model.
         </li>
       </ul>
       <p class="hint">
-        Families come from the id prefix: the leading letters of a model id.
-        Missing values are never guessed.
+        A family is the letter prefix of a model id. Missing values never get
+        guessed.
       </p>
 
       <h3>Combined score</h3>
       <p>
-        A second source, LMArena Overall as of 2026-10-08, feeds a combined score.
-        The score is the mean of the normalised values from both sources, and mapped
-        or missing Arena entries are marked in the table.
+        The Score column blends both benchmark sources. Each source is scaled
+        to 0 to 100, then the two values are averaged. Mapped or missing
+        Arena values are marked in the table.
       </p>
 
-      <h3>Free exclusion</h3>
-      <p>Free models can never be recommended:</p>
+      <h3>Why free models are out</h3>
+      <p>Free models never get picked. Three reasons:</p>
       <ul class="matrix">
-        <li><strong>Limited time:</strong> their continuation is not guaranteed, so no stable recommendation is possible.</li>
-        <li><strong>Unstable:</strong> free tiers throttle under load and hit 429s and timeouts.</li>
-        <li><strong>No dedicated AA slug:</strong> no reliable benchmark data, 404.</li>
+        <li><strong>Limited time.</strong> They can vanish any day, so no pick would hold.</li>
+        <li><strong>Unstable.</strong> Free tiers throttle under load and throw 429s.</li>
+        <li><strong>No own AA page.</strong> There is no benchmark data to check.</li>
       </ul>
     </section>
 
     <section aria-labelledby="prompt-heading">
       <h2 id="prompt-heading">Daily prompt</h2>
-      <p class="hint">For other opencode setups: copy and run daily to re-evaluate.</p>
+      <p class="hint">Works in any opencode setup. Copy it, run it once a day, get fresh picks.</p>
       <div class="prompt-box">
-        <button id="copy-prompt" type="button">Copy daily prompt</button>
+        <button id="copy-prompt" type="button">Copy prompt</button>
         <pre id="daily-prompt">Re-evaluate the opencode Go models, $10 plan, NOT Go Plus.
 
 Sources:
@@ -193,10 +195,10 @@ Procedure:
 
   <footer class="site-footer">
     <p>
-      Static page, no build step, no external requests.
+      A static page. No build step, no tracking, no external requests.
       Data from <a href="https://opencode.ai" rel="noopener noreferrer" target="_blank">opencode.ai</a>
       and <a href="https://artificialanalysis.ai/" rel="noopener noreferrer" target="_blank">Artificial Analysis</a>.
-      Reuse only with attribution.
+      Reuse with attribution.
     </p>
   </footer>
 
