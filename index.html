@@ -40,6 +40,7 @@
             <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
             <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
             <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
+            <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
             Many small turns, long sessions: largest req/5h among models with AA
@@ -58,6 +59,7 @@
             <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
             <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
             <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
+            <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
             Most calls per task: maximises AA speed × req/5h at AA intel ≥ 34 and a
@@ -75,6 +77,7 @@
             <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
             <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
             <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
+            <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
             About one call per task, long reports: highest AA intel at req/5h ≥ 1000
@@ -93,6 +96,7 @@
             <div class="metric"><dt>AA speed</dt><dd data-field="speed">n/a</dd></div>
             <div class="metric"><dt>AA $/task</dt><dd data-field="cost">n/a</dd></div>
             <div class="metric"><dt>AA status</dt><dd data-field="status">n/a</dd></div>
+            <div class="metric"><dt>Score</dt><dd data-field="score">n/a</dd></div>
           </dl>
           <p class="card-reason">
             Read-only, must not burn Dev quota: cheapest AA $/task at req/5h ≥ 3000,
@@ -138,6 +142,13 @@
         Families come from the id prefix, such as <code>deepseek-*</code>,
         <code>mimo-*</code> and <code>claude-*</code>. Missing values are never
         guessed.
+      </p>
+
+      <h3>Combined score</h3>
+      <p>
+        A second source, LMArena Overall as of 2026-10-08, feeds a combined score.
+        The score is the mean of the normalised values from both sources, and mapped
+        or missing Arena entries are marked in the table.
       </p>
 
       <h3>Free exclusion</h3>

@@ -9,9 +9,11 @@ What it does
 2. Parses the **Go plan** tables (``data-plan-panel="go"``) only -- the Go Plus tab
    (``data-plan-panel="go-plus"``) is ignored on purpose.
 3. Carries the Artificial Analysis values (aa_intelligence, aa_speed_tps,
-   aa_cost_per_task, aa_status) over from the existing ``data/latest.json`` by model id.
+   aa_cost_per_task, aa_status) and the second-benchmark fields (bench2_score,
+   bench2_status) over from the existing ``data/latest.json`` by model id.
 4. Detects new model ids by diffing against the existing file. New models get
-   ``aa_status: "no_data"`` and null AA fields (AA is never guessed).
+   ``aa_status: "no_data"``, null AA fields and ``bench2_status: "missing"``
+   (benchmarks are never guessed).
 5. Prints the updated JSON to stdout. Diagnostics go to stderr, so stdout stays
    valid JSON and can be redirected straight into ``data/latest.json``.
 
@@ -217,6 +219,10 @@ def build(existing: dict, catalog: dict, model_ids: list[str], docs_url: str,
         out["free"] = entry["free"]
         if entry["free"]:
             out["excluded_reason"] = old.get("excluded_reason", FREE_REASON)
+        # Second benchmark (LMArena) carries over verbatim as well; a new or
+        # previously unknown model has no value, so it is flagged as missing.
+        out["bench2_score"] = old.get("bench2_score")
+        out["bench2_status"] = old.get("bench2_status") or "missing"
         models.append(out)
 
     # Stable order: keep the existing order for known ids, append new ids at the end.

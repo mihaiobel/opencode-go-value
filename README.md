@@ -30,8 +30,12 @@ See the Role matrix in the Methodology section of the page.
 - `https://opencode.ai/docs/go/` for Go plan prices, monthly limits, estimated `req/5h`.
 - `https://opencode.ai/inference/go/v1/models` for full model ids.
 - `https://artificialanalysis.ai/models/<slug>` for Intelligence Index, Cost per Task, output speed.
+- `https://lmarena.ai/leaderboard/text` for the LMArena Overall score, the second benchmark source, as of 2026-10-08.
 
 Missing AA pages are recorded as `aa_status: "no_data"`. Nothing is guessed.
+The page also shows a combined score per model: the mean of the normalised AA
+intelligence and LMArena Overall values, each mapped to 0 to 100. Mapped and
+missing Arena entries are marked in the table.
 The Sources section of the page shows only the two canonical root domains,
 `https://opencode.ai` and `https://artificialanalysis.ai`.
 

@@ -59,6 +59,32 @@ function idDesc(a, b) {
   return String(b.id).localeCompare(String(a.id));
 }
 
+/* ---------- combined score ---------- */
+
+// Each source is normalised to 0..100 over its own range, then averaged.
+// AA intelligence spans 0..60, LMArena Overall spans 1100..1550. A source with
+// no value is skipped; when both are missing the score is null.
+const SCORE_RANGES = {
+  aa_intelligence: { min: 0, max: 60 },
+  bench2_score: { min: 1100, max: 1550 },
+};
+
+function norm100(v, range) {
+  return (100 * (v - range.min)) / (range.max - range.min);
+}
+
+function combinedScore(aa, arena) {
+  const parts = [];
+  const a = num(aa);
+  if (a !== null) parts.push(norm100(a, SCORE_RANGES.aa_intelligence));
+  const r = num(arena);
+  if (r !== null) parts.push(norm100(r, SCORE_RANGES.bench2_score));
+  if (!parts.length) return null;
+  let sum = 0;
+  for (const p of parts) sum += p;
+  return sum / parts.length;
+}
+
 /* ---------- role matrix ---------- */
 
 // orchestrator: biggest req/5h among AA-intel >= 38, plus the muse-spark
@@ -194,6 +220,7 @@ function fillRoleCard(card, model) {
     model.aa_speed_tps == null ? NA : fmtNum(model.aa_speed_tps, 1) + " t/s";
   field("cost").textContent = fmtUsd(model.aa_cost_per_task, 2);
   field("status").textContent = model.aa_status || NA;
+  field("score").textContent = fmtNum(combinedScore(model.aa_intelligence, model.bench2_score), 1);
 }
 
 function renderRoles(reco) {
@@ -216,6 +243,8 @@ const COLUMNS = [
   { key: "aa_speed_tps", label: "AA speed", type: "num", cell: (m) => m.aa_speed_tps },
   { key: "aa_cost_per_task", label: "AA $/task", type: "num", cell: (m) => m.aa_cost_per_task },
   { key: "aa_status", label: "AA status", type: "text", cell: (m) => m.aa_status || "" },
+  { key: "bench2_score", label: "Arena", type: "num", cell: (m) => m.bench2_score },
+  { key: "score", label: "Score", type: "num", cell: (m) => combinedScore(m.aa_intelligence, m.bench2_score) },
 ];
 
 let sortState = { key: "aa_intelligence", dir: -1 };
@@ -234,6 +263,11 @@ function fmtCell(col, m) {
       return raw == null ? NA : fmtNum(raw, 1);
     case "aa_cost_per_task":
       return fmtUsd(raw, 2);
+    case "bench2_score":
+      if (m.bench2_status === "missing") return NA;
+      return fmtNum(raw, 2) + (m.bench2_status === "mapped" ? " *" : "");
+    case "score":
+      return fmtNum(raw, 1);
     default:
       return fmtNum(raw);
   }
@@ -305,6 +339,9 @@ function renderTable(models, reco) {
       const td = document.createElement("td");
       td.textContent = fmtCell(col, m);
       if (col.type === "num") td.classList.add("num");
+      if (col.key === "bench2_score" && m.bench2_status === "mapped") {
+        td.title = "mapped from a sibling model";
+      }
       if (idx === 0) {
         if (recommended.has(m.id)) {
           const badge = document.createElement("span");
