@@ -24,6 +24,8 @@ See the Role matrix in the Methodology section of the page.
 | `styles.css` | warm-paper ledger look, light and dark via system setting, mobile list layout, no external dependencies |
 | `data/latest.json` | meta and model data, as-of date in the meta |
 | `scripts/fetch_go.py` | updates the JSON from the Go docs, stdlib only |
+| `scripts/fetch_arena.py` | refreshes the LMArena values from the Hugging Face mirror, needs `pyarrow` |
+| `data/arena_map.json` | Go model id to Arena model name, where they differ |
 | `.github/workflows/update-data.yml` | daily cron at 06:00 UTC: refresh data and commit |
 | `.github/workflows/pages.yml` | GitHub Pages deploy |
 | `refresh-prompt.md` | copy-paste prompt in English for foreign opencode setups |
@@ -33,11 +35,15 @@ See the Role matrix in the Methodology section of the page.
 - `https://opencode.ai/docs/go/` for Go plan prices, monthly limits, estimated `req/5h`.
 - `https://opencode.ai/inference/go/v1/models` for full model ids.
 - `https://artificialanalysis.ai/models/<slug>` for Intelligence Index, Cost per Task, output speed.
-- `https://lmarena.ai/leaderboard/text` for the LMArena Overall score, the second benchmark source, as of 2026-10-08.
+- `https://lmarena.ai/leaderboard/text` for the LMArena Overall score, the second benchmark source.
+  The site blocks scripted access, so `scripts/fetch_arena.py` reads the same ranking from
+  the Hugging Face mirror `lmarena-ai/leaderboard-dataset` (config `text`, category `overall`).
+  `data/arena_map.json` maps Go model ids to Arena names where they differ.
 
-The page also shows a combined score per model: the mean of the normalised AA
-intelligence and LMArena Overall values, each mapped to 0 to 100. Mapped and
-missing Arena entries are marked in the table.
+The page also shows a combined score per model: the mean of the AA intelligence
+and LMArena Overall values, each scaled to 0 to 100 between the lowest and highest
+value among the listed models, so both sources weigh the same. Mapped Arena
+entries (`~`) and missing ones are marked.
 The Sources section of the page shows only the two canonical root domains,
 `https://opencode.ai` and `https://artificialanalysis.ai`.
 
@@ -55,8 +61,13 @@ The Sources section of the page shows only the two canonical root domains,
    mv data/latest.json.tmp data/latest.json
    ```
 
-4. `.github/workflows/update-data.yml` runs this daily at 06:00 UTC and commits
-   `data/latest.json` only when it changed. The as-of date in the meta is written along.
+4. `scripts/fetch_arena.py` then refreshes the LMArena values the same way
+   (`pip install pyarrow` first). A model counts as `ok` when its id equals the
+   Arena name, as `mapped` via `data/arena_map.json`, otherwise as `missing`.
+   AA values still need the daily prompt.
+5. `.github/workflows/update-data.yml` runs both daily at 06:00 UTC, commits
+   `data/latest.json` only when it changed and then starts the Pages deploy.
+   The as-of dates in the meta are written along.
 
 Help and options:
 

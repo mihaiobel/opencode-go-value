@@ -46,29 +46,44 @@ function idDesc(a, b) {
 
 /* ---------- combined score ---------- */
 
-// Each source is normalised to 0..100 over its own range, then averaged.
-// AA intelligence spans 0..60, LMArena Overall spans 1100..1550. A source with
-// no value is skipped; when both are missing the score is null.
-const SCORE_RANGES = {
-  aa_intelligence: { min: 0, max: 60 },
-  bench2_score: { min: 1100, max: 1550 },
-};
+// Each source is scaled to 0..100 between the lowest and the highest value
+// among the listed models, then the available values are averaged. So both
+// sources weigh the same, whatever their native range. A source with no value
+// is skipped; when both are missing the score is null.
+function rangeOf(models, key) {
+  let min = Infinity;
+  let max = -Infinity;
+  for (const m of models) {
+    const v = num(m[key]);
+    if (v === null) continue;
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+  return max > min ? { min, max } : null;
+}
 
 function norm100(v, range) {
   return (100 * (v - range.min)) / (range.max - range.min);
 }
 
-function combinedScore(aa, arena) {
-  const parts = [];
-  const a = num(aa);
-  if (a !== null) parts.push(norm100(a, SCORE_RANGES.aa_intelligence));
-  const r = num(arena);
-  if (r !== null) parts.push(norm100(r, SCORE_RANGES.bench2_score));
-  if (!parts.length) return null;
-  let sum = 0;
-  for (const p of parts) sum += p;
-  return sum / parts.length;
+function makeScorer(models) {
+  const aaRange = rangeOf(models, "aa_intelligence");
+  const arenaRange = rangeOf(models, "bench2_score");
+  return function score(m) {
+    const parts = [];
+    const a = num(m.aa_intelligence);
+    if (a !== null && aaRange) parts.push(norm100(a, aaRange));
+    const r = num(m.bench2_score);
+    if (r !== null && arenaRange) parts.push(norm100(r, arenaRange));
+    if (!parts.length) return null;
+    let sum = 0;
+    for (const p of parts) sum += p;
+    return sum / parts.length;
+  };
 }
+
+// Set once the data is loaded; every score in the page goes through it.
+let scoreOf = () => null;
 
 /* ---------- role matrix ---------- */
 
@@ -171,6 +186,12 @@ function fmtNum(v, digits) {
   });
 }
 
+// LMArena value, "~" prefixed when the entry was mapped to the closest match.
+function fmtArena(m) {
+  const text = fmtNum(m.bench2_score);
+  return text !== NA && m.bench2_status === "mapped" ? "~" + text : text;
+}
+
 function fmtUsd(v, digits) {
   if (v === null || v === undefined) return NA;
   const n = Number(v);
@@ -199,11 +220,12 @@ function fillRolePick(row, model) {
   }
   row.classList.remove("pick-empty");
   if (modelLine) modelLine.textContent = model.id;
-  const score = combinedScore(model.aa_intelligence, model.bench2_score);
+  const score = scoreOf(model);
   set("score", fmtNum(score, 1));
   set("req", fmtNum(model.requests_per_5h));
   set("month", fmtUsd(model.monthly_limit_usd, 0));
   set("intel", fmtNum(model.aa_intelligence));
+  set("arena", fmtArena(model));
 }
 
 function renderRoles(reco) {
@@ -219,10 +241,11 @@ function renderRoles(reco) {
 // document the rest of the data.
 const COLUMNS = [
   { key: "id", label: "Model", type: "text", cell: (m) => m.id },
-  { key: "score", label: "Score", type: "num", cell: (m) => combinedScore(m.aa_intelligence, m.bench2_score) },
+  { key: "score", label: "Score", type: "num", cell: (m) => scoreOf(m) },
   { key: "requests_per_5h", label: "req/5h", type: "num", cell: (m) => m.requests_per_5h },
   { key: "monthly_limit_usd", label: "$/month", type: "num", cell: (m) => m.monthly_limit_usd },
   { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
+  { key: "bench2_score", label: "LMArena", type: "num", cell: (m) => m.bench2_score },
 ];
 
 let sortState = { key: "score", dir: -1 };
@@ -235,6 +258,8 @@ function fmtCell(col, m) {
       return fmtUsd(raw, 0);
     case "score":
       return fmtNum(raw, 1);
+    case "bench2_score":
+      return fmtArena(m);
     default:
       return fmtNum(raw);
   }
@@ -314,6 +339,9 @@ function renderTable(models, reco) {
       const td = document.createElement("td");
       td.textContent = fmtCell(col, m);
       td.dataset.label = col.label;
+      if (col.key === "bench2_score" && m.bench2_status === "mapped") {
+        td.title = "Mapped to the closest LMArena entry.";
+      }
       if (col.type === "num") td.classList.add("num");
       if (idx === 0) {
         for (const role of recommended.get(m.id) || []) {
@@ -453,6 +481,7 @@ async function init() {
   const models = Array.isArray(payload.models) ? payload.models : [];
   renderMeta(meta);
   renderSources(meta);
+  scoreOf = makeScorer(models);
   const reco = recommend(models);
   renderRoles(reco);
   renderTable(models, reco);

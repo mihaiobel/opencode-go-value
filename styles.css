@@ -500,7 +500,7 @@ details.notes > summary:hover { color: var(--ink); }
 
   table.models tbody tr {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.35rem 0.5rem;
     padding: 0.8rem 0;
     border-bottom: 1px solid var(--rule-soft);

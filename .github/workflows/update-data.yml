@@ -29,6 +29,13 @@ jobs:
       - name: Refresh data/latest.json
         run: python3 scripts/fetch_go.py --data data/latest.json > data/latest.json.tmp && mv data/latest.json.tmp data/latest.json
 
+      - name: Refresh LMArena values
+        # The Arena step may fail (network, file moved); the Go refresh still counts.
+        continue-on-error: true
+        run: |
+          pip install --quiet pyarrow
+          python3 scripts/fetch_arena.py --data data/latest.json > data/latest.json.tmp && mv data/latest.json.tmp data/latest.json
+
       - name: Validate JSON
         run: python3 -m json.tool data/latest.json > /dev/null
 

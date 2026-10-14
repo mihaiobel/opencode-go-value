@@ -15,7 +15,7 @@ Sources, primary only, never guess:
 - https://opencode.ai/inference/go/v1/models  -> full model ids.
 - https://artificialanalysis.ai/models/<slug>  -> Intelligence Index, Cost per Task in USD,
   output speed in t/s. If the AA page is missing with a 404, mark it "no AA data", do not guess.
-- https://lmarena.ai/leaderboard/text  -> LMArena Overall score, as of 2026-10-08. If the
+- https://lmarena.ai/leaderboard/text  -> LMArena Overall score, latest ranking. If the
   entry is missing, mark it "missing" and do not guess.
 
 Role matrix:
@@ -28,9 +28,9 @@ Role matrix:
 Models flagged as free are excluded: limited-time only, unstable and
 timeout-prone, no own AA slug.
 
-Score: compute a combined score per model as the mean of the normalised AA and
-LMArena values, each mapped to 0 to 100. Mark mapped and missing Arena values in
-the table.
+Score: compute a combined score per model as the mean of the scaled AA and
+LMArena values. Scale each source to 0 to 100 between the lowest and highest
+value among the listed models. Mark mapped and missing Arena values in the table.
 
 Output:
 1. Role table: role | model id | rationale | key numbers, meaning req/5h, $/month, AA intel, AA speed, AA $/Task.
