@@ -199,7 +199,9 @@ function fillRoleCard(card, model) {
   }
   card.classList.remove("card-empty");
   if (modelLine) modelLine.textContent = model.id;
-  set("score", fmtNum(combinedScore(model.aa_intelligence, model.bench2_score), 1));
+  const score = combinedScore(model.aa_intelligence, model.bench2_score);
+  set("score", fmtNum(score, 1));
+  card.style.setProperty("--score", score === null ? "0%" : Math.max(0, Math.min(100, score)).toFixed(1) + "%");
   set("req", fmtNum(model.requests_per_5h));
   set("month", fmtUsd(model.monthly_limit_usd, 0));
   set("intel", fmtNum(model.aa_intelligence));
@@ -224,7 +226,7 @@ const COLUMNS = [
   { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
 ];
 
-let sortState = { key: "aa_intelligence", dir: -1 };
+let sortState = { key: "score", dir: -1 };
 
 function fmtCell(col, m) {
   const raw = col.cell(m);
@@ -243,7 +245,11 @@ function sortModels(models) {
   const col = COLUMNS.find((c) => c.key === sortState.key);
   if (!col) return models;
   const dir = sortState.dir;
+  // Rows that can never be picked (free or no AA data) sink below the rest.
+  const sinks = (m) => (isFree(m) || m.aa_status === "no_data" ? 1 : 0);
   return models.slice().sort((a, b) => {
+    const ds = sinks(a) - sinks(b);
+    if (ds !== 0) return ds;
     const av = col.cell(a);
     const bv = col.cell(b);
     if (col.type === "text") {
@@ -263,11 +269,14 @@ function sortModels(models) {
 function renderTable(models, reco) {
   const table = document.getElementById("models-table");
   if (!table) return;
-  const recommended = new Set(
-    ["orchestrator", "dev", "reviewer", "researcher"]
-      .map((k) => reco[k] && reco[k].id)
-      .filter(Boolean)
-  );
+  // model id -> roles it was picked for, so the table can tag each row.
+  const recommended = new Map();
+  for (const role of ["orchestrator", "dev", "reviewer", "researcher"]) {
+    const m = reco[role];
+    if (!m) continue;
+    if (!recommended.has(m.id)) recommended.set(m.id, []);
+    recommended.get(m.id).push(role);
+  }
 
   const thead = document.createElement("thead");
   const htr = document.createElement("tr");
@@ -276,6 +285,7 @@ function renderTable(models, reco) {
     th.textContent = col.label;
     th.dataset.key = col.key;
     th.className = "sortable";
+    if (col.type === "num") th.classList.add("num");
     if (sortState.key === col.key) {
       th.classList.add(sortState.dir === 1 ? "sort-asc" : "sort-desc");
       th.setAttribute("aria-sort", sortState.dir === 1 ? "ascending" : "descending");
@@ -304,12 +314,23 @@ function renderTable(models, reco) {
     COLUMNS.forEach((col, idx) => {
       const td = document.createElement("td");
       td.textContent = fmtCell(col, m);
+      td.dataset.label = col.label;
       if (col.type === "num") td.classList.add("num");
+      if (col.key === "score") {
+        const s = num(col.cell(m));
+        if (s !== null) {
+          const bar = document.createElement("span");
+          bar.className = "score-bar";
+          bar.style.setProperty("--w", Math.max(0, Math.min(100, s)).toFixed(1) + "%");
+          td.prepend(bar);
+        }
+      }
       if (idx === 0) {
-        if (recommended.has(m.id)) {
+        for (const role of recommended.get(m.id) || []) {
           const badge = document.createElement("span");
-          badge.className = "badge";
-          badge.textContent = "recommended";
+          badge.className = "badge badge-role";
+          badge.dataset.role = role;
+          badge.textContent = role;
           td.append(" ", badge);
         }
         if (isFree(m)) {
@@ -337,11 +358,19 @@ function renderMeta(meta) {
   // meta.plan carries a parenthesised price; strip the parentheses for display.
   if (plan) {
     plan.textContent = String(meta.plan || "opencode-go")
-      .replace(" (", ",")
+      .replace(" (", ", ")
       .replace(")", "");
   }
+  const arena = document.getElementById("arena-date");
+  if (arena) arena.textContent = meta.bench2_stand || NA;
   const aav = document.getElementById("aa-version");
-  if (aav) aav.textContent = meta.aa_index_version || NA;
+  // "Artificial Analysis Intelligence Index v4.3.2" -> "v4.3.2"; the chip label says the rest.
+  if (aav) {
+    const full = meta.aa_index_version || NA;
+    const v = /v[\d.]+\s*$/.exec(full);
+    aav.textContent = v ? v[0].trim() : full;
+    aav.title = full;
+  }
 }
 
 // The data lists many deep links: opencode docs and models pages, and one AA
@@ -368,14 +397,12 @@ function renderSources(meta) {
   }
   for (const root of (roots.length ? roots : SOURCE_ROOTS)) {
     const url = "https://" + root;
-    const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = url;
-    a.textContent = url;
+    a.textContent = root;
     a.rel = "noopener noreferrer";
     a.target = "_blank";
-    li.append(a);
-    host.append(li);
+    host.append(a);
   }
 }
 
