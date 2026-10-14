@@ -6,7 +6,7 @@
 
 const DATA_URL = "data/latest.json";
 
-// Placeholder for a missing value across cards, table and meta.
+// Placeholder for a missing value across picks, table and meta.
 const NA = "n/a";
 
 /* ---------- helpers ---------- */
@@ -181,11 +181,11 @@ function fmtUsd(v, digits) {
   });
 }
 
-/* ---------- role cards ---------- */
+/* ---------- role picks ---------- */
 
-function fillRoleCard(card, model) {
-  const field = (name) => card.querySelector('[data-field="' + name + '"]');
-  // The slim cards carry model, score, req, month and intel. set() tolerates
+function fillRolePick(row, model) {
+  const field = (name) => row.querySelector('[data-field="' + name + '"]');
+  // Each pick carries model, score, req, month and intel. set() tolerates
   // a field being absent so the markup can stay lean.
   const set = (name, text) => {
     const el = field(name);
@@ -193,24 +193,23 @@ function fillRoleCard(card, model) {
   };
   const modelLine = field("model");
   if (!model) {
-    card.classList.add("card-empty");
+    row.classList.add("pick-empty");
     if (modelLine) modelLine.textContent = "No model meets this role's criteria.";
     return;
   }
-  card.classList.remove("card-empty");
+  row.classList.remove("pick-empty");
   if (modelLine) modelLine.textContent = model.id;
   const score = combinedScore(model.aa_intelligence, model.bench2_score);
   set("score", fmtNum(score, 1));
-  card.style.setProperty("--score", score === null ? "0%" : Math.max(0, Math.min(100, score)).toFixed(1) + "%");
   set("req", fmtNum(model.requests_per_5h));
   set("month", fmtUsd(model.monthly_limit_usd, 0));
   set("intel", fmtNum(model.aa_intelligence));
 }
 
 function renderRoles(reco) {
-  const cards = document.querySelectorAll("#role-cards .card[data-role]");
-  for (const card of cards) {
-    fillRoleCard(card, reco[card.dataset.role]);
+  const rows = document.querySelectorAll("#picks .pick[data-role]");
+  for (const row of rows) {
+    fillRolePick(row, reco[row.dataset.role]);
   }
 }
 
@@ -316,26 +315,16 @@ function renderTable(models, reco) {
       td.textContent = fmtCell(col, m);
       td.dataset.label = col.label;
       if (col.type === "num") td.classList.add("num");
-      if (col.key === "score") {
-        const s = num(col.cell(m));
-        if (s !== null) {
-          const bar = document.createElement("span");
-          bar.className = "score-bar";
-          bar.style.setProperty("--w", Math.max(0, Math.min(100, s)).toFixed(1) + "%");
-          td.prepend(bar);
-        }
-      }
       if (idx === 0) {
         for (const role of recommended.get(m.id) || []) {
           const badge = document.createElement("span");
-          badge.className = "badge badge-role";
-          badge.dataset.role = role;
+          badge.className = "tag";
           badge.textContent = role;
           td.append(" ", badge);
         }
         if (isFree(m)) {
           const tag = document.createElement("span");
-          tag.className = "badge badge-free";
+          tag.className = "tag tag-free";
           tag.textContent = "free, excluded";
           tag.title =
             "Free model: limited-time availability, prone to instability/timeouts, no dedicated AA slug.";
@@ -439,11 +428,11 @@ function wireCopy() {
 /* ---------- bootstrap ---------- */
 
 function showLoadError(message) {
-  const host = document.getElementById("role-cards");
+  const host = document.getElementById("picks");
   if (!host) return;
-  for (const card of host.querySelectorAll(".card[data-role]")) {
-    card.classList.add("card-empty");
-    const line = card.querySelector('[data-field="model"]');
+  for (const row of host.querySelectorAll(".pick[data-role]")) {
+    row.classList.add("pick-empty");
+    const line = row.querySelector('[data-field="model"]');
     if (line) line.textContent = message;
   }
 }

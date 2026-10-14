@@ -19,9 +19,9 @@ See the Role matrix in the Methodology section of the page.
 
 | File | Purpose |
 |---|---|
-| `index.html` | single page: role cards, sortable full table, methodology, sources, copy button |
+| `index.html` | single page: role picks, sortable full table, methodology, sources, copy button |
 | `app.js` | loads `data/latest.json`, computes the role recommendation, renders the sortable table |
-| `styles.css` | dark and light theme via system setting, mobile list layout, no external dependencies |
+| `styles.css` | warm-paper ledger look, light and dark via system setting, mobile list layout, no external dependencies |
 | `data/latest.json` | meta and model data, as-of date in the meta |
 | `scripts/fetch_go.py` | updates the JSON from the Go docs, stdlib only |
 | `.github/workflows/update-data.yml` | daily cron at 06:00 UTC: refresh data and commit |

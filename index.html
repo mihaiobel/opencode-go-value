@@ -6,26 +6,16 @@
   <meta name="color-scheme" content="dark light" />
   <title>opencode-go Value: best model per agent role</title>
   <meta name="description" content="Picks the best opencode Go model for each agent role, from plan quota and public benchmarks." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2311151d'/%3E%3Crect x='7' y='17' width='4' height='8' rx='1' fill='%238ab4f8'/%3E%3Crect x='14' y='11' width='4' height='14' rx='1' fill='%237ee0b8'/%3E%3Crect x='21' y='7' width='4' height='18' rx='1' fill='%23c3a6ff'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23262019'/%3E%3Crect x='7' y='17' width='4' height='8' fill='%23f4efe6'/%3E%3Crect x='14' y='11' width='4' height='14' fill='%23f4efe6'/%3E%3Crect x='21' y='7' width='4' height='18' fill='%23d9693f'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <nav class="topbar" aria-label="Sections">
-    <div class="topbar-inner">
-      <a class="brand" href="#top">opencode-go <span>Value</span></a>
-      <div class="topbar-links">
-        <a href="#roles-heading">Picks</a>
-        <a href="#table-heading">Models</a>
-        <a href="#prompt-heading">Prompt</a>
-      </div>
-    </div>
-  </nav>
-
   <header class="hero" id="top">
     <h1>One model per agent role.</h1>
     <p class="lead">
       The picks weigh the Go plan quota against two public benchmarks.
-      Only the $10 Go plan counts.
+      Only the $10 Go plan counts. Want fresh picks every day?
+      <a href="#prompt-heading">Copy the prompt.</a>
     </p>
     <dl class="meta-line">
       <div><dt>As of</dt><dd id="stand-date">n/a</dd></div>
@@ -38,65 +28,53 @@
   <main>
     <section aria-labelledby="roles-heading">
       <h2 id="roles-heading">Picks by role</h2>
-      <div id="role-cards" class="cards">
-        <article class="card" data-role="orchestrator">
-          <h3 class="card-role">Orchestrator</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <div class="card-score">
-            <p><span data-field="score">n/a</span> score</p>
-            <div class="meter" aria-hidden="true"><span></span></div>
-          </div>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+      <div id="picks" class="picks">
+        <article class="pick" data-role="orchestrator">
+          <h3 class="pick-role">Orchestrator</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <p class="pick-score"><span data-field="score">n/a</span> score</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">Many small turns over long sessions. So it gets the largest req/5h of all models with AA intel 38 or better.</p>
+          <p class="pick-reason">Many small turns over long sessions. So it gets the largest req/5h of all models with AA intel 38 or better.</p>
         </article>
 
-        <article class="card" data-role="dev">
-          <h3 class="card-role">Dev</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <div class="card-score">
-            <p><span data-field="score">n/a</span> score</p>
-            <div class="meter" aria-hidden="true"><span></span></div>
-          </div>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+        <article class="pick" data-role="dev">
+          <h3 class="pick-role">Dev</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <p class="pick-score"><span data-field="score">n/a</span> score</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">Runs the most calls per task. Frequency beats peak, so the pick maximises AA speed times req/5h at AA intel 34 or better.</p>
+          <p class="pick-reason">Runs the most calls per task. Frequency beats peak, so the pick maximises AA speed times req/5h at AA intel 34 or better.</p>
         </article>
 
-        <article class="card" data-role="reviewer">
-          <h3 class="card-role">Reviewer</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <div class="card-score">
-            <p><span data-field="score">n/a</span> score</p>
-            <div class="meter" aria-hidden="true"><span></span></div>
-          </div>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+        <article class="pick" data-role="reviewer">
+          <h3 class="pick-role">Reviewer</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <p class="pick-score"><span data-field="score">n/a</span> score</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">About one call per task, then a long report. Highest AA intel at req/5h 1000 or better, from a family no other role uses.</p>
+          <p class="pick-reason">About one call per task, then a long report. Highest AA intel at req/5h 1000 or better, from a family no other role uses.</p>
         </article>
 
-        <article class="card" data-role="researcher">
-          <h3 class="card-role">Researcher</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <div class="card-score">
-            <p><span data-field="score">n/a</span> score</p>
-            <div class="meter" aria-hidden="true"><span></span></div>
-          </div>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+        <article class="pick" data-role="researcher">
+          <h3 class="pick-role">Researcher</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <p class="pick-score"><span data-field="score">n/a</span> score</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">Reads a lot, writes little. Cheapest AA cost per task at req/5h 3000 or better and AA intel 34 or better.</p>
+          <p class="pick-reason">Reads a lot, writes little. Cheapest AA cost per task at req/5h 3000 or better and AA intel 34 or better.</p>
         </article>
       </div>
     </section>
@@ -145,7 +123,7 @@
         <h2 id="prompt-heading">Daily prompt</h2>
         <p class="hint">Copy it, run it once a day in any opencode setup, get fresh picks.</p>
       </div>
-      <div class="prompt-box">
+      <div class="prompt-frame">
         <div class="prompt-bar">
           <span class="prompt-file">refresh-prompt</span>
           <button id="copy-prompt" type="button">Copy prompt</button>
