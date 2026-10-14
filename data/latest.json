@@ -45,10 +45,12 @@
       "aa_status: ok | partial | mapped_step-5 | no_data."
     ],
     "new_models": [
-      "cat-jam-free"
+      "gemini-4-argon-contributor"
     ],
     "undocumented_ids": [
       "deepseek-flash",
+      "deepseek-v4-flash",
+      "deepseek-v4-flash-vision-exp",
       "glm-5.1",
       "minimax-m2.5",
       "omen-alpha",
@@ -390,36 +392,6 @@
       "bench2_status": "ok"
     },
     {
-      "id": "deepseek-v4-flash",
-      "monthly_limit_usd": 30.0,
-      "requests_per_5h": 13000.0,
-      "price_in": 0.15,
-      "price_out": 0.6,
-      "price_cached": 0.003,
-      "aa_intelligence": 34,
-      "aa_speed_tps": 200.6,
-      "aa_cost_per_task": 0.22,
-      "aa_status": "ok",
-      "free": false,
-      "bench2_score": 1432.19,
-      "bench2_status": "ok"
-    },
-    {
-      "id": "deepseek-v4-flash-vision-exp",
-      "monthly_limit_usd": 15.0,
-      "requests_per_5h": 6500.0,
-      "price_in": 0.15,
-      "price_out": 0.6,
-      "price_cached": 0.003,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": false,
-      "bench2_score": null,
-      "bench2_status": "missing"
-    },
-    {
       "id": "hy4-preview",
       "monthly_limit_usd": 30.0,
       "requests_per_5h": 1350.0,
@@ -552,6 +524,21 @@
       "aa_status": "no_data",
       "free": true,
       "excluded_reason": "Free nur befristet (limited time); kein eigener AA-Slug, keine Benchmark-Daten",
+      "bench2_score": null,
+      "bench2_status": "missing"
+    },
+    {
+      "id": "gemini-4-argon-contributor",
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
+      "price_in": 4.0,
+      "price_out": 20.0,
+      "price_cached": 0.2,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false,
       "bench2_score": null,
       "bench2_status": "missing"
     }
