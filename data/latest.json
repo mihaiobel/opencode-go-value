@@ -1,6 +1,6 @@
 {
   "meta": {
-    "stand_datum": "2026-10-14",
+    "stand_datum": "2026-10-15",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "bench2_name": "LMArena Overall",
     "bench2_stand": "2026-10-13",
@@ -44,13 +44,7 @@
       "requests_per_5h = Docs-Schaetzung (Go-Plan), nicht hartes Limit.",
       "aa_status: ok | partial | mapped_step-5 | no_data."
     ],
-    "new_models": [
-      "gemini-4-argon-contributor"
-    ],
     "undocumented_ids": [
-      "deepseek-flash",
-      "deepseek-v4-flash",
-      "deepseek-v4-flash-vision-exp",
       "glm-5.1",
       "minimax-m2.5",
       "omen-alpha",
