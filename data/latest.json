@@ -1,9 +1,9 @@
 {
   "meta": {
-    "stand_datum": "2026-10-15",
+    "stand_datum": "2026-10-16",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "bench2_name": "LMArena Overall",
-    "bench2_stand": "2026-10-13",
+    "bench2_stand": "2026-10-15",
     "bench2_quellen": [
       "https://lmarena.ai/leaderboard/text",
       "https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset"
@@ -46,10 +46,16 @@
     ],
     "undocumented_ids": [
       "glm-5.1",
+      "grok-4.6",
+      "kimi-k2.6",
       "minimax-m2.5",
+      "minimax-m2.7",
       "omen-alpha",
       "qwen3.6-plus",
       "qwen3.7-max"
+    ],
+    "new_models": [
+      "step-5-preview"
     ]
   },
   "models": [
@@ -65,7 +71,7 @@
       "aa_cost_per_task": 0.28,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1470.96,
+      "bench2_score": 1470.53,
       "bench2_status": "ok"
     },
     {
@@ -80,7 +86,7 @@
       "aa_cost_per_task": 2.01,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1471.39,
+      "bench2_score": 1471.46,
       "bench2_status": "mapped"
     },
     {
@@ -95,7 +101,7 @@
       "aa_cost_per_task": 1.47,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1470.0,
+      "bench2_score": 1470.37,
       "bench2_status": "mapped"
     },
     {
@@ -110,8 +116,8 @@
       "aa_cost_per_task": 2.0,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1475.57,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "kimi-k2.7-code",
@@ -129,21 +135,6 @@
       "bench2_status": "missing"
     },
     {
-      "id": "kimi-k2.6",
-      "monthly_limit_usd": 60.0,
-      "requests_per_5h": 1150.0,
-      "price_in": 0.95,
-      "price_out": 4.0,
-      "price_cached": 0.16,
-      "aa_intelligence": 27,
-      "aa_speed_tps": 45.2,
-      "aa_cost_per_task": 0.8,
-      "aa_status": "ok",
-      "free": false,
-      "bench2_score": 1455.37,
-      "bench2_status": "ok"
-    },
-    {
       "id": "longcat-2.0",
       "monthly_limit_usd": 60.0,
       "requests_per_5h": 11400.0,
@@ -155,7 +146,7 @@
       "aa_cost_per_task": 0.15,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1426.57,
+      "bench2_score": 1426.5,
       "bench2_status": "mapped"
     },
     {
@@ -175,22 +166,6 @@
       "bench2_status": "missing"
     },
     {
-      "id": "step-5-preview-free",
-      "monthly_limit_usd": null,
-      "requests_per_5h": null,
-      "price_in": 0.0,
-      "price_out": 0.0,
-      "price_cached": 0.0,
-      "aa_intelligence": 44,
-      "aa_speed_tps": 89.2,
-      "aa_cost_per_task": 1.03,
-      "aa_status": "mapped_step-5",
-      "free": true,
-      "excluded_reason": "Free nur befristet (limited time); AA-Werte nur vom Basismodell Step 5 Preview, Free-Slug selbst 404",
-      "bench2_score": 1440.01,
-      "bench2_status": "mapped"
-    },
-    {
       "id": "mimo-v2.6-flash",
       "monthly_limit_usd": 60.0,
       "requests_per_5h": 30100.0,
@@ -202,7 +177,7 @@
       "aa_cost_per_task": 0.06,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1455.23,
+      "bench2_score": 1455.21,
       "bench2_status": "ok"
     },
     {
@@ -217,7 +192,7 @@
       "aa_cost_per_task": 0.13,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1490.28,
+      "bench2_score": 1490.68,
       "bench2_status": "ok"
     },
     {
@@ -232,7 +207,7 @@
       "aa_cost_per_task": null,
       "aa_status": "no_data",
       "free": false,
-      "bench2_score": 1427.76,
+      "bench2_score": 1427.73,
       "bench2_status": "ok"
     },
     {
@@ -247,7 +222,7 @@
       "aa_cost_per_task": 0.05,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1465.07,
+      "bench2_score": 1464.89,
       "bench2_status": "ok"
     },
     {
@@ -262,22 +237,7 @@
       "aa_cost_per_task": 0.51,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1433.43,
-      "bench2_status": "ok"
-    },
-    {
-      "id": "minimax-m2.7",
-      "monthly_limit_usd": 60.0,
-      "requests_per_5h": 3400.0,
-      "price_in": 0.3,
-      "price_out": 1.2,
-      "price_cached": 0.06,
-      "aa_intelligence": 23,
-      "aa_speed_tps": 66.0,
-      "aa_cost_per_task": null,
-      "aa_status": "partial",
-      "free": false,
-      "bench2_score": 1404.48,
+      "bench2_score": 1433.33,
       "bench2_status": "ok"
     },
     {
@@ -292,8 +252,8 @@
       "aa_cost_per_task": 1.6,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1489.75,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "muse-spark-1.2-contributor",
@@ -307,8 +267,8 @@
       "aa_cost_per_task": null,
       "aa_status": "no_data",
       "free": false,
-      "bench2_score": 1484.91,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "qwen3.8-max",
@@ -322,7 +282,7 @@
       "aa_cost_per_task": 5.41,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1482.45,
+      "bench2_score": 1482.88,
       "bench2_status": "ok"
     },
     {
@@ -352,7 +312,7 @@
       "aa_cost_per_task": 0.22,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1454.61,
+      "bench2_score": 1454.58,
       "bench2_status": "ok"
     },
     {
@@ -367,7 +327,7 @@
       "aa_cost_per_task": 0.27,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1462.54,
+      "bench2_score": 1462.85,
       "bench2_status": "mapped"
     },
     {
@@ -382,7 +342,7 @@
       "aa_cost_per_task": 0.67,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1451.23,
+      "bench2_score": 1451.16,
       "bench2_status": "ok"
     },
     {
@@ -412,7 +372,7 @@
       "aa_cost_per_task": 0.07,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1437.43,
+      "bench2_score": 1438.0,
       "bench2_status": "ok"
     },
     {
@@ -442,22 +402,7 @@
       "aa_cost_per_task": 3.74,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1400.57,
-      "bench2_status": "mapped"
-    },
-    {
-      "id": "grok-4.6",
-      "monthly_limit_usd": 15.0,
-      "requests_per_5h": 169.0,
-      "price_in": 2.0,
-      "price_out": 6.0,
-      "price_cached": 0.5,
-      "aa_intelligence": 44,
-      "aa_speed_tps": 56.5,
-      "aa_cost_per_task": 1.48,
-      "aa_status": "ok",
-      "free": false,
-      "bench2_score": 1428.23,
+      "bench2_score": 1400.52,
       "bench2_status": "mapped"
     },
     {
@@ -472,7 +417,7 @@
       "aa_cost_per_task": 0.07,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1391.51,
+      "bench2_score": 1391.63,
       "bench2_status": "mapped"
     },
     {
@@ -487,7 +432,7 @@
       "aa_cost_per_task": 0.18,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1430.58,
+      "bench2_score": 1430.66,
       "bench2_status": "mapped"
     },
     {
@@ -502,7 +447,7 @@
       "aa_cost_per_task": 0.21,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1396.45,
+      "bench2_score": 1396.64,
       "bench2_status": "mapped"
     },
     {
@@ -528,6 +473,21 @@
       "price_in": 4.0,
       "price_out": 20.0,
       "price_cached": 0.2,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false,
+      "bench2_score": null,
+      "bench2_status": "missing"
+    },
+    {
+      "id": "step-5-preview",
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
+      "price_in": 1.0,
+      "price_out": 2.7,
+      "price_cached": 0.1,
       "aa_intelligence": null,
       "aa_speed_tps": null,
       "aa_cost_per_task": null,
