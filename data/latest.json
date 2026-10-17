@@ -1,6 +1,6 @@
 {
   "meta": {
-    "stand_datum": "2026-10-16",
+    "stand_datum": "2026-10-17",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "bench2_name": "LMArena Overall",
     "bench2_stand": "2026-10-15",
@@ -55,7 +55,7 @@
       "qwen3.7-max"
     ],
     "new_models": [
-      "step-5-preview"
+      "beam-free"
     ]
   },
   "models": [
@@ -451,22 +451,6 @@
       "bench2_status": "mapped"
     },
     {
-      "id": "cat-jam-free",
-      "monthly_limit_usd": null,
-      "requests_per_5h": null,
-      "price_in": 0.0,
-      "price_out": 0.0,
-      "price_cached": 0.0,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": true,
-      "excluded_reason": "Free nur befristet (limited time); kein eigener AA-Slug, keine Benchmark-Daten",
-      "bench2_score": null,
-      "bench2_status": "missing"
-    },
-    {
       "id": "gemini-4-argon-contributor",
       "monthly_limit_usd": null,
       "requests_per_5h": null,
@@ -493,6 +477,22 @@
       "aa_cost_per_task": null,
       "aa_status": "no_data",
       "free": false,
+      "bench2_score": null,
+      "bench2_status": "missing"
+    },
+    {
+      "id": "beam-free",
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
+      "price_in": 0.0,
+      "price_out": 0.0,
+      "price_cached": 0.0,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": true,
+      "excluded_reason": "Free nur befristet (limited time); kein eigener AA-Slug, keine Benchmark-Daten",
       "bench2_score": null,
       "bench2_status": "missing"
     }
