@@ -1,6 +1,6 @@
 {
   "meta": {
-    "stand_datum": "2026-10-19",
+    "stand_datum": "2026-10-20",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "bench2_name": "LMArena Overall",
     "bench2_stand": "2026-10-15",
@@ -53,9 +53,6 @@
       "omen-alpha",
       "qwen3.6-plus",
       "qwen3.7-max"
-    ],
-    "new_models": [
-      "minimax-m3.1-flash-free"
     ]
   },
   "models": [
