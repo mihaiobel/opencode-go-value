@@ -1,9 +1,9 @@
 {
   "meta": {
-    "stand_datum": "2026-10-20",
+    "stand_datum": "2026-10-21",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "bench2_name": "LMArena Overall",
-    "bench2_stand": "2026-10-15",
+    "bench2_stand": "2026-10-20",
     "bench2_quellen": [
       "https://lmarena.ai/leaderboard/text",
       "https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset"
@@ -68,8 +68,8 @@
       "aa_cost_per_task": 0.28,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1470.53,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "glm-5.3",
@@ -83,8 +83,8 @@
       "aa_cost_per_task": 2.01,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1471.46,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "glm-5.2",
@@ -98,8 +98,8 @@
       "aa_cost_per_task": 1.47,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1470.37,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "kimi-k3",
@@ -143,8 +143,8 @@
       "aa_cost_per_task": 0.15,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1426.5,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "longcat-2.5-preview-free",
@@ -174,8 +174,8 @@
       "aa_cost_per_task": 0.06,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1455.21,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "mimo-v2.6-pro",
@@ -189,8 +189,8 @@
       "aa_cost_per_task": 0.13,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1490.68,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "mimo-v2.5",
@@ -204,8 +204,8 @@
       "aa_cost_per_task": null,
       "aa_status": "no_data",
       "free": false,
-      "bench2_score": 1427.73,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "mimo-v2.5-pro",
@@ -219,8 +219,8 @@
       "aa_cost_per_task": 0.05,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1464.89,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "minimax-m3",
@@ -234,8 +234,8 @@
       "aa_cost_per_task": 0.51,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1433.33,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "muse-spark-1.3-contributor",
@@ -279,8 +279,8 @@
       "aa_cost_per_task": 5.41,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1482.88,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "qwen3.8-flash",
@@ -309,8 +309,8 @@
       "aa_cost_per_task": 0.22,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1454.58,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "deepseek-v4.1-flash",
@@ -324,8 +324,8 @@
       "aa_cost_per_task": 0.27,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1462.85,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "deepseek-v4-pro",
@@ -339,8 +339,8 @@
       "aa_cost_per_task": 0.67,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1451.16,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "hy4-preview",
@@ -369,8 +369,8 @@
       "aa_cost_per_task": 0.07,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1438.0,
-      "bench2_status": "ok"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "grok-4.7",
@@ -384,8 +384,8 @@
       "aa_cost_per_task": 3.74,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1400.52,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "gpt-6-luna",
@@ -399,8 +399,8 @@
       "aa_cost_per_task": 0.07,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1391.63,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "gpt-5.6-luna",
@@ -414,8 +414,8 @@
       "aa_cost_per_task": 0.18,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1430.66,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "claude-haiku-5-5",
@@ -429,8 +429,8 @@
       "aa_cost_per_task": 0.21,
       "aa_status": "ok",
       "free": false,
-      "bench2_score": 1396.64,
-      "bench2_status": "mapped"
+      "bench2_score": null,
+      "bench2_status": "missing"
     },
     {
       "id": "gemini-4-argon-contributor",
@@ -449,8 +449,8 @@
     },
     {
       "id": "step-5-preview",
-      "monthly_limit_usd": null,
-      "requests_per_5h": null,
+      "monthly_limit_usd": 15.0,
+      "requests_per_5h": 430.0,
       "price_in": 1.0,
       "price_out": 2.7,
       "price_cached": 0.1,
