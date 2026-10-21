@@ -15,8 +15,6 @@ Sources, primary only, never guess:
 - https://opencode.ai/inference/go/v1/models  -> full model ids.
 - https://artificialanalysis.ai/models/<slug>  -> Intelligence Index, Cost per Task in USD,
   output speed in t/s. If the AA page is missing with a 404, mark it "no AA data", do not guess.
-- https://lmarena.ai/leaderboard/text  -> LMArena Overall score, latest ranking. If the
-  entry is missing, mark it "missing" and do not guess.
 
 Role matrix:
 - orchestrator: largest req/5h among models with AA intel >= 38.
@@ -25,15 +23,12 @@ Role matrix:
   orchestrator, dev or researcher, where a family is the leading letters of the model id.
 - researcher: lowest AA $/Task at req/5h >= 3000, AA intel >= 34, and not the dev model.
 
+Only consider the models https://opencode.ai/go lists by default, not "show more".
 Models flagged as free are excluded: limited-time only, unstable and
 timeout-prone, no own AA slug.
 
-Score: compute a combined score per model as the mean of the scaled AA and
-LMArena values. Scale each source to 0 to 100 between the lowest and highest
-value among the listed models. Mark mapped and missing Arena values in the table.
-
 Output:
 1. Role table: role | model id | rationale | key numbers, meaning req/5h, $/month, AA intel, AA speed, AA $/Task.
-2. Full model table with every Go model; mark free models as "excluded".
+2. Table of those top models with the recommended role per model; mark free models as "excluded".
 3. Call out missing AA data explicitly as "no AA data".
 ```

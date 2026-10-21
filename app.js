@@ -6,7 +6,7 @@
 
 const DATA_URL = "data/latest.json";
 
-// Placeholder for a missing value across picks, table and meta.
+// Placeholder for a missing value across cards, table and meta.
 const NA = "n/a";
 
 /* ---------- helpers ---------- */
@@ -43,47 +43,6 @@ function maxBy(items, score) {
 function idDesc(a, b) {
   return String(b.id).localeCompare(String(a.id));
 }
-
-/* ---------- combined score ---------- */
-
-// Each source is scaled to 0..100 between the lowest and the highest value
-// among the listed models, then the available values are averaged. So both
-// sources weigh the same, whatever their native range. A source with no value
-// is skipped; when both are missing the score is null.
-function rangeOf(models, key) {
-  let min = Infinity;
-  let max = -Infinity;
-  for (const m of models) {
-    const v = num(m[key]);
-    if (v === null) continue;
-    if (v < min) min = v;
-    if (v > max) max = v;
-  }
-  return max > min ? { min, max } : null;
-}
-
-function norm100(v, range) {
-  return (100 * (v - range.min)) / (range.max - range.min);
-}
-
-function makeScorer(models) {
-  const aaRange = rangeOf(models, "aa_intelligence");
-  const arenaRange = rangeOf(models, "bench2_score");
-  return function score(m) {
-    const parts = [];
-    const a = num(m.aa_intelligence);
-    if (a !== null && aaRange) parts.push(norm100(a, aaRange));
-    const r = num(m.bench2_score);
-    if (r !== null && arenaRange) parts.push(norm100(r, arenaRange));
-    if (!parts.length) return null;
-    let sum = 0;
-    for (const p of parts) sum += p;
-    return sum / parts.length;
-  };
-}
-
-// Set once the data is loaded; every score in the page goes through it.
-let scoreOf = () => null;
 
 /* ---------- role matrix ---------- */
 
@@ -162,7 +121,11 @@ function pickReviewer(models, usedFamilies) {
   return pool[0] || null;
 }
 
-function recommend(models) {
+function recommend(allModels, featuredIds) {
+  // Only the models opencode.ai/go lists by default are considered.
+  const models = featuredIds.length
+    ? allModels.filter((m) => featuredIds.includes(m.id))
+    : allModels;
   const orchestrator = pickOrchestrator(models);
   const dev = pickDev(models);
   const researcher = pickResearcher(models, dev);
@@ -186,12 +149,6 @@ function fmtNum(v, digits) {
   });
 }
 
-// LMArena value, "~" prefixed when the entry was mapped to the closest match.
-function fmtArena(m) {
-  const text = fmtNum(m.bench2_score);
-  return text !== NA && m.bench2_status === "mapped" ? "~" + text : text;
-}
-
 function fmtUsd(v, digits) {
   if (v === null || v === undefined) return NA;
   const n = Number(v);
@@ -202,11 +159,11 @@ function fmtUsd(v, digits) {
   });
 }
 
-/* ---------- role picks ---------- */
+/* ---------- role cards ---------- */
 
-function fillRolePick(row, model) {
-  const field = (name) => row.querySelector('[data-field="' + name + '"]');
-  // Each pick carries model, score, req, month and intel. set() tolerates
+function fillRoleCard(card, model) {
+  const field = (name) => card.querySelector('[data-field="' + name + '"]');
+  // The slim cards carry model, req, month and intel. set() tolerates
   // a field being absent so the markup can stay lean.
   const set = (name, text) => {
     const el = field(name);
@@ -214,78 +171,70 @@ function fillRolePick(row, model) {
   };
   const modelLine = field("model");
   if (!model) {
-    row.classList.add("pick-empty");
+    card.classList.add("card-empty");
     if (modelLine) modelLine.textContent = "No model meets this role's criteria.";
     return;
   }
-  row.classList.remove("pick-empty");
+  card.classList.remove("card-empty");
   if (modelLine) modelLine.textContent = model.id;
-  const score = scoreOf(model);
-  set("score", fmtNum(score, 1));
   set("req", fmtNum(model.requests_per_5h));
   set("month", fmtUsd(model.monthly_limit_usd, 0));
   set("intel", fmtNum(model.aa_intelligence));
-  set("arena", fmtArena(model));
 }
 
 function renderRoles(reco) {
-  const rows = document.querySelectorAll("#picks .pick[data-role]");
-  for (const row of rows) {
-    fillRolePick(row, reco[row.dataset.role]);
+  const cards = document.querySelectorAll("#role-cards .card[data-role]");
+  for (const card of cards) {
+    fillRoleCard(card, reco[card.dataset.role]);
   }
 }
 
 /* ---------- sortable table ---------- */
 
-// Only the columns that drive a decision. The collapsed notes in index.html
-// document the rest of the data.
+const ROLE_LABELS = {
+  orchestrator: "Orchestrator",
+  dev: "Dev",
+  reviewer: "Reviewer",
+  researcher: "Researcher",
+};
+
 const COLUMNS = [
   { key: "id", label: "Model", type: "text", cell: (m) => m.id },
-  { key: "score", label: "Score", type: "num", cell: (m) => scoreOf(m) },
+  { key: "role", label: "Pick", type: "text", cell: (m) => m._role || "" },
   { key: "requests_per_5h", label: "req/5h", type: "num", cell: (m) => m.requests_per_5h },
   { key: "monthly_limit_usd", label: "$/month", type: "num", cell: (m) => m.monthly_limit_usd },
   { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
-  { key: "bench2_score", label: "LMArena", type: "num", cell: (m) => m.bench2_score },
 ];
 
-let sortState = { key: "score", dir: -1 };
+// null = the order opencode.ai/go lists the models in.
+let sortState = { key: null, dir: 1 };
 
 function fmtCell(col, m) {
   const raw = col.cell(m);
+  if (col.key === "role") return raw ? ROLE_LABELS[raw] : "";
   if (col.type === "text") return raw === null || raw === undefined ? NA : String(raw);
-  switch (col.key) {
-    case "monthly_limit_usd":
-      return fmtUsd(raw, 0);
-    case "score":
-      return fmtNum(raw, 1);
-    case "bench2_score":
-      return fmtArena(m);
-    default:
-      return fmtNum(raw);
-  }
+  return col.key === "monthly_limit_usd" ? fmtUsd(raw, 0) : fmtNum(raw);
 }
 
 function sortModels(models) {
   const col = COLUMNS.find((c) => c.key === sortState.key);
   if (!col) return models;
   const dir = sortState.dir;
-  // Rows that can never be picked (free or no AA data) sink below the rest.
-  const sinks = (m) => (isFree(m) || m.aa_status === "no_data" ? 1 : 0);
   return models.slice().sort((a, b) => {
-    const ds = sinks(a) - sinks(b);
-    if (ds !== 0) return ds;
     const av = col.cell(a);
     const bv = col.cell(b);
     if (col.type === "text") {
+      // models without a pick sort last
+      if (!av && bv) return 1;
+      if (av && !bv) return -1;
       return String(av).localeCompare(String(bv)) * dir;
     }
     const an = num(av);
     const bn = num(bv);
     // nulls always last, regardless of direction
-    if (an === null && bn === null) return String(a.id).localeCompare(String(b.id));
+    if (an === null && bn === null) return 0;
     if (an === null) return 1;
     if (bn === null) return -1;
-    if (an === bn) return String(a.id).localeCompare(String(b.id));
     return (an - bn) * dir;
   });
 }
@@ -293,13 +242,12 @@ function sortModels(models) {
 function renderTable(models, reco) {
   const table = document.getElementById("models-table");
   if (!table) return;
-  // model id -> roles it was picked for, so the table can tag each row.
-  const recommended = new Map();
-  for (const role of ["orchestrator", "dev", "reviewer", "researcher"]) {
-    const m = reco[role];
-    if (!m) continue;
-    if (!recommended.has(m.id)) recommended.set(m.id, []);
-    recommended.get(m.id).push(role);
+  const recommended = new Set();
+  for (const role of Object.keys(ROLE_LABELS)) {
+    if (reco[role]) {
+      reco[role]._role = role;
+      recommended.add(reco[role].id);
+    }
   }
 
   const thead = document.createElement("thead");
@@ -309,7 +257,6 @@ function renderTable(models, reco) {
     th.textContent = col.label;
     th.dataset.key = col.key;
     th.className = "sortable";
-    if (col.type === "num") th.classList.add("num");
     if (sortState.key === col.key) {
       th.classList.add(sortState.dir === 1 ? "sort-asc" : "sort-desc");
       th.setAttribute("aria-sort", sortState.dir === 1 ? "ascending" : "descending");
@@ -338,22 +285,12 @@ function renderTable(models, reco) {
     COLUMNS.forEach((col, idx) => {
       const td = document.createElement("td");
       td.textContent = fmtCell(col, m);
-      td.dataset.label = col.label;
-      if (col.key === "bench2_score" && m.bench2_status === "mapped") {
-        td.title = "Mapped to the closest LMArena entry.";
-      }
       if (col.type === "num") td.classList.add("num");
       if (idx === 0) {
-        for (const role of recommended.get(m.id) || []) {
-          const badge = document.createElement("span");
-          badge.className = "tag";
-          badge.textContent = role;
-          td.append(" ", badge);
-        }
         if (isFree(m)) {
           const tag = document.createElement("span");
-          tag.className = "tag tag-free";
-          tag.textContent = "free, excluded";
+          tag.className = "badge badge-free";
+          tag.textContent = "free, not picked";
           tag.title =
             "Free model: limited-time availability, prone to instability/timeouts, no dedicated AA slug.";
           td.append(" ", tag);
@@ -375,19 +312,11 @@ function renderMeta(meta) {
   // meta.plan carries a parenthesised price; strip the parentheses for display.
   if (plan) {
     plan.textContent = String(meta.plan || "opencode-go")
-      .replace(" (", ", ")
+      .replace(" (", ",")
       .replace(")", "");
   }
-  const arena = document.getElementById("arena-date");
-  if (arena) arena.textContent = meta.bench2_stand || NA;
   const aav = document.getElementById("aa-version");
-  // "Artificial Analysis Intelligence Index v4.3.2" -> "v4.3.2"; the chip label says the rest.
-  if (aav) {
-    const full = meta.aa_index_version || NA;
-    const v = /v[\d.]+\s*$/.exec(full);
-    aav.textContent = v ? v[0].trim() : full;
-    aav.title = full;
-  }
+  if (aav) aav.textContent = meta.aa_index_version || NA;
 }
 
 // The data lists many deep links: opencode docs and models pages, and one AA
@@ -414,12 +343,14 @@ function renderSources(meta) {
   }
   for (const root of (roots.length ? roots : SOURCE_ROOTS)) {
     const url = "https://" + root;
+    const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = url;
-    a.textContent = root;
+    a.textContent = url;
     a.rel = "noopener noreferrer";
     a.target = "_blank";
-    host.append(a);
+    li.append(a);
+    host.append(li);
   }
 }
 
@@ -456,11 +387,11 @@ function wireCopy() {
 /* ---------- bootstrap ---------- */
 
 function showLoadError(message) {
-  const host = document.getElementById("picks");
+  const host = document.getElementById("role-cards");
   if (!host) return;
-  for (const row of host.querySelectorAll(".pick[data-role]")) {
-    row.classList.add("pick-empty");
-    const line = row.querySelector('[data-field="model"]');
+  for (const card of host.querySelectorAll(".card[data-role]")) {
+    card.classList.add("card-empty");
+    const line = card.querySelector('[data-field="model"]');
     if (line) line.textContent = message;
   }
 }
@@ -478,11 +409,15 @@ async function init() {
   }
 
   const meta = payload.meta || {};
-  const models = Array.isArray(payload.models) ? payload.models : [];
+  const all = Array.isArray(payload.models) ? payload.models : [];
+  const featuredIds = Array.isArray(meta.featured_ids) ? meta.featured_ids : [];
+  // The table shows the models opencode.ai/go lists by default, in that order.
+  const models = featuredIds.length
+    ? featuredIds.map((id) => all.find((m) => m.id === id)).filter(Boolean)
+    : all;
   renderMeta(meta);
   renderSources(meta);
-  scoreOf = makeScorer(models);
-  const reco = recommend(models);
+  const reco = recommend(all, featuredIds);
   renderRoles(reco);
   renderTable(models, reco);
 }

@@ -3,145 +3,106 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="dark light" />
   <title>opencode-go Value: best model per agent role</title>
   <meta name="description" content="Picks the best opencode Go model for each agent role, from plan quota and public benchmarks." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23262019'/%3E%3Crect x='7' y='17' width='4' height='8' fill='%23f4efe6'/%3E%3Crect x='14' y='11' width='4' height='14' fill='%23f4efe6'/%3E%3Crect x='21' y='7' width='4' height='18' fill='%23d9693f'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="hero" id="top">
-    <h1>One model per agent role.</h1>
-    <p class="lead">
-      The picks weigh the Go plan quota against two public benchmarks.
-      Only the $10 Go plan counts. Want fresh picks every day?
-      <a href="#prompt-heading">Copy the prompt.</a>
+  <header class="site-header">
+    <h1>opencode-go Value</h1>
+    <p class="subtitle">
+      One model per agent role, picked from the models opencode lists first on
+      its Go page. Only the $10 Go plan counts.
     </p>
-    <dl class="meta-line">
-      <div><dt>As of</dt><dd id="stand-date">n/a</dd></div>
-      <div><dt>Plan</dt><dd id="plan-name">opencode-go, $10/month</dd></div>
-      <div><dt>AA index</dt><dd id="aa-version">n/a</dd></div>
-      <div><dt>LMArena</dt><dd id="arena-date">n/a</dd></div>
-    </dl>
+    <p class="meta-line">
+      <span class="chip">As of <span id="stand-date">n/a</span></span>
+      <span class="chip">Plan <span id="plan-name">opencode-go, $10/month</span></span>
+      <span class="chip">AA index <span id="aa-version">n/a</span></span>
+    </p>
   </header>
 
   <main>
     <section aria-labelledby="roles-heading">
-      <div class="section-head">
-        <h2 id="roles-heading">Picks by role</h2>
-        <p class="hint">
-          Score is the average of AA intel and LMArena, each scaled to 0 to 100.
-          A <code>~</code> marks an Arena entry mapped to the closest match.
-        </p>
-      </div>
-      <div id="picks" class="picks">
-        <article class="pick" data-role="orchestrator">
-          <h3 class="pick-role">Orchestrator</h3>
-          <p class="pick-model" data-field="model">n/a</p>
-          <p class="pick-score"><span data-field="score">n/a</span> score</p>
-          <dl class="pick-stats">
-            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
-            <div><dt>LMArena</dt><dd data-field="arena">n/a</dd></div>
+      <h2 id="roles-heading">Picks by role</h2>
+      <div id="role-cards" class="cards">
+        <article class="card" data-role="orchestrator">
+          <h3 class="card-role">Orchestrator</h3>
+          <p class="card-model" data-field="model">n/a</p>
+          <dl class="metrics">
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="pick-reason">Many small turns over long sessions. So it gets the largest req/5h of all models with AA intel 38 or better.</p>
+          <p class="card-reason">
+            Many small turns over long sessions. So it gets the largest
+            req/5h of all models with AA intel 38 or better.
+          </p>
         </article>
 
-        <article class="pick" data-role="dev">
-          <h3 class="pick-role">Dev</h3>
-          <p class="pick-model" data-field="model">n/a</p>
-          <p class="pick-score"><span data-field="score">n/a</span> score</p>
-          <dl class="pick-stats">
-            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
-            <div><dt>LMArena</dt><dd data-field="arena">n/a</dd></div>
+        <article class="card" data-role="dev">
+          <h3 class="card-role">Dev</h3>
+          <p class="card-model" data-field="model">n/a</p>
+          <dl class="metrics">
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="pick-reason">Runs the most calls per task. Frequency beats peak, so the pick maximises AA speed times req/5h at AA intel 34 or better.</p>
+          <p class="card-reason">
+            Runs the most calls per task. Frequency beats peak, so the pick
+            maximises AA speed times req/5h at AA intel 34 or better.
+          </p>
         </article>
 
-        <article class="pick" data-role="reviewer">
-          <h3 class="pick-role">Reviewer</h3>
-          <p class="pick-model" data-field="model">n/a</p>
-          <p class="pick-score"><span data-field="score">n/a</span> score</p>
-          <dl class="pick-stats">
-            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
-            <div><dt>LMArena</dt><dd data-field="arena">n/a</dd></div>
+        <article class="card" data-role="reviewer">
+          <h3 class="card-role">Reviewer</h3>
+          <p class="card-model" data-field="model">n/a</p>
+          <dl class="metrics">
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="pick-reason">About one call per task, then a long report. Highest AA intel at req/5h 1000 or better, from a family no other role uses.</p>
+          <p class="card-reason">
+            About one call per task, then a long report. Highest AA intel at
+            req/5h 1000 or better, from a family no other role uses.
+          </p>
         </article>
 
-        <article class="pick" data-role="researcher">
-          <h3 class="pick-role">Researcher</h3>
-          <p class="pick-model" data-field="model">n/a</p>
-          <p class="pick-score"><span data-field="score">n/a</span> score</p>
-          <dl class="pick-stats">
-            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
-            <div><dt>LMArena</dt><dd data-field="arena">n/a</dd></div>
+        <article class="card" data-role="researcher">
+          <h3 class="card-role">Researcher</h3>
+          <p class="card-model" data-field="model">n/a</p>
+          <dl class="metrics">
+            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="pick-reason">Reads a lot, writes little. Cheapest AA cost per task at req/5h 3000 or better and AA intel 34 or better.</p>
+          <p class="card-reason">
+            Reads a lot, writes little. Cheapest AA cost per task at req/5h
+            3000 or better and AA intel 34 or better.
+          </p>
         </article>
       </div>
     </section>
 
     <section aria-labelledby="table-heading">
-      <div class="section-head">
-        <h2 id="table-heading">All models</h2>
-        <p class="hint">
-          Click a header to sort. Score averages AA intel and LMArena. Grey rows
-          have no AA data. Free models stay listed but never get picked.
-        </p>
-      </div>
+      <h2 id="table-heading">Top models</h2>
+      <p class="hint">
+        The models opencode.ai/go shows by default, in that order. The Pick
+        column says which role a model is recommended for. Click a header to
+        sort. Grey rows have no AA data, free models never get picked.
+      </p>
       <div class="table-wrap">
         <table id="models-table" class="models">
           <tbody><tr><td class="loading">JavaScript builds this table from the local data.</td></tr></tbody>
         </table>
       </div>
-      <details class="notes">
-        <summary>Methodology and notes</summary>
-        <div class="notes-body">
-          <h3>Role matrix</h3>
-          <ul class="matrix">
-            <li><strong>Orchestrator</strong>: largest <code>req/5h</code> among models with AA intel at least 38.</li>
-            <li><strong>Dev</strong>: highest AA speed times <code>req/5h</code>, at AA intel at least 34 and a monthly limit of at least $30.</li>
-            <li><strong>Reviewer</strong>: highest AA intel at <code>req/5h</code> at least 1000, in a family no other role uses.</li>
-            <li><strong>Researcher</strong>: cheapest AA cost per task at <code>req/5h</code> at least 3000 and AA intel at least 34, never the dev model.</li>
-          </ul>
-          <h3>Score</h3>
-          <p>
-            The Score column blends both benchmark sources. Each source is
-            scaled to 0 to 100 between the lowest and the highest value among
-            the listed models, so both weigh the same. The scaled values are
-            then averaged. A missing source is skipped, never guessed.
-          </p>
-          <h3>Notes</h3>
-          <p>
-            A family is the letter prefix of a model id. <code>req/5h</code>
-            is the estimate from the docs, not a hard limit. Where a model has
-            price tiers, the base tier counts.
-          </p>
-        </div>
-      </details>
     </section>
 
     <section aria-labelledby="prompt-heading">
-      <div class="section-head">
-        <h2 id="prompt-heading">Daily prompt</h2>
-        <p class="hint">Copy it, run it once a day in any opencode setup, get fresh picks.</p>
-      </div>
-      <div class="prompt-frame">
-        <div class="prompt-bar">
-          <span class="prompt-file">refresh-prompt</span>
-          <button id="copy-prompt" type="button">Copy prompt</button>
-        </div>
-        <details class="prompt-details">
-          <summary>Show prompt</summary>
-          <pre id="daily-prompt">Re-evaluate the opencode Go models, $10 plan, NOT Go Plus, and recommend the best
+      <h2 id="prompt-heading">Daily prompt</h2>
+      <p class="hint">Copy it, run it once a day in any opencode setup, get fresh picks.</p>
+      <div class="prompt-box">
+        <button id="copy-prompt" type="button">Copy prompt</button>
+        <pre id="daily-prompt">Re-evaluate the opencode Go models, $10 plan, NOT Go Plus, and recommend the best
 model per agent role.
 
 Sources, primary only, never guess:
@@ -150,8 +111,6 @@ Sources, primary only, never guess:
 - <a href="https://opencode.ai/inference/go/v1/models">https://opencode.ai/inference/go/v1/models</a>  -> full model ids.
 - <a href="https://artificialanalysis.ai/models/&lt;slug&gt;">https://artificialanalysis.ai/models/&lt;slug&gt;</a>  -> Intelligence Index, Cost per Task in USD,
   output speed in t/s. If the AA page is missing with a 404, mark it "no AA data", do not guess.
-- <a href="https://lmarena.ai/leaderboard/text">https://lmarena.ai/leaderboard/text</a>  -> LMArena Overall score, latest ranking. If the
-  entry is missing, mark it "missing" and do not guess.
 
 Role matrix:
 - orchestrator: largest req/5h among models with AA intel >= 38.
@@ -160,24 +119,20 @@ Role matrix:
   orchestrator, dev or researcher, where a family is the leading letters of the model id.
 - researcher: lowest AA $/Task at req/5h >= 3000, AA intel >= 34, and not the dev model.
 
+Only consider the models <a href="https://opencode.ai/go">https://opencode.ai/go</a> lists by default, not "show more".
 Models flagged as free are excluded: limited-time only, unstable and
 timeout-prone, no own AA slug.
 
-Score: compute a combined score per model as the mean of the scaled AA and
-LMArena values. Scale each source to 0 to 100 between the lowest and highest
-value among the listed models. Mark mapped and missing Arena values in the table.
-
 Output:
 1. Role table: role | model id | rationale | key numbers, meaning req/5h, $/month, AA intel, AA speed, AA $/Task.
-2. Full model table with every Go model; mark free models as "excluded".
+2. Table of those top models with the recommended role per model; mark free models as "excluded".
 3. Call out missing AA data explicitly as "no AA data".</pre>
-        </details>
       </div>
+      <ul id="sources-list" class="sources"></ul>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p class="sources-line">Sources <span id="sources-list" class="sources"></span></p>
     <p>A static page. No build step, no tracking, no external requests. Reuse with attribution.</p>
   </footer>
 
