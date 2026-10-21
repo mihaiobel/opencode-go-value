@@ -3,93 +3,92 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark light" />
   <title>opencode-go Value: best model per agent role</title>
-  <meta name="description" content="Picks the best opencode Go model for each agent role, from plan quota and public benchmarks." />
+  <meta name="description" content="Picks the best opencode Go model for each agent role, from plan quota and benchmark data." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='3' fill='%23262019'/%3E%3Crect x='7' y='17' width='4' height='8' fill='%23f4efe6'/%3E%3Crect x='14' y='11' width='4' height='14' fill='%23f4efe6'/%3E%3Crect x='21' y='7' width='4' height='18' fill='%23d9693f'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <h1>opencode-go Value</h1>
-    <p class="subtitle">
-      One model per agent role, picked from the models opencode lists first on
-      its Go page. Only the $10 Go plan counts.
+  <header class="hero" id="top">
+    <h1>One model per agent role.</h1>
+    <p class="lead">
+      Picked from the models opencode lists first on its Go page, weighing
+      plan quota against the Artificial Analysis benchmark. Only the $10 Go
+      plan counts. Want fresh picks every day?
+      <a href="#prompt-heading">Copy the prompt.</a>
     </p>
-    <p class="meta-line">
-      <span class="chip">As of <span id="stand-date">n/a</span></span>
-      <span class="chip">Plan <span id="plan-name">opencode-go, $10/month</span></span>
-      <span class="chip">AA index <span id="aa-version">n/a</span></span>
-    </p>
+    <dl class="meta-line">
+      <div><dt>As of</dt><dd id="stand-date">n/a</dd></div>
+      <div><dt>Plan</dt><dd id="plan-name">opencode-go, $10/month</dd></div>
+      <div><dt>AA index</dt><dd id="aa-version">n/a</dd></div>
+    </dl>
   </header>
 
   <main>
     <section aria-labelledby="roles-heading">
-      <h2 id="roles-heading">Picks by role</h2>
-      <div id="role-cards" class="cards">
-        <article class="card" data-role="orchestrator">
-          <h3 class="card-role">Orchestrator</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+      <div class="section-head">
+        <h2 id="roles-heading">Picks by role</h2>
+        <p class="hint">
+          One model per role, taken from the top models below.
+        </p>
+      </div>
+      <div id="picks" class="picks">
+        <article class="pick" data-role="orchestrator">
+          <h3 class="pick-role">Orchestrator</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">
-            Many small turns over long sessions. So it gets the largest
-            req/5h of all models with AA intel 38 or better.
-          </p>
+          <p class="pick-reason">Many small turns over long sessions. So it gets the largest req/5h of all models with AA intel 38 or better.</p>
         </article>
 
-        <article class="card" data-role="dev">
-          <h3 class="card-role">Dev</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+        <article class="pick" data-role="dev">
+          <h3 class="pick-role">Dev</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">
-            Runs the most calls per task. Frequency beats peak, so the pick
-            maximises AA speed times req/5h at AA intel 34 or better.
-          </p>
+          <p class="pick-reason">Runs the most calls per task. Frequency beats peak, so the pick maximises AA speed times req/5h at AA intel 34 or better.</p>
         </article>
 
-        <article class="card" data-role="reviewer">
-          <h3 class="card-role">Reviewer</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+        <article class="pick" data-role="reviewer">
+          <h3 class="pick-role">Reviewer</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">
-            About one call per task, then a long report. Highest AA intel at
-            req/5h 1000 or better, from a family no other role uses.
-          </p>
+          <p class="pick-reason">About one call per task, then a long report. Highest AA intel at req/5h 1000 or better, from a family no other role uses.</p>
         </article>
 
-        <article class="card" data-role="researcher">
-          <h3 class="card-role">Researcher</h3>
-          <p class="card-model" data-field="model">n/a</p>
-          <dl class="metrics">
-            <div class="metric"><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
-            <div class="metric"><dt>$/month</dt><dd data-field="month">n/a</dd></div>
-            <div class="metric"><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
+        <article class="pick" data-role="researcher">
+          <h3 class="pick-role">Researcher</h3>
+          <p class="pick-model" data-field="model">n/a</p>
+          <dl class="pick-stats">
+            <div><dt>req/5h</dt><dd data-field="req">n/a</dd></div>
+            <div><dt>$/month</dt><dd data-field="month">n/a</dd></div>
+            <div><dt>AA intel</dt><dd data-field="intel">n/a</dd></div>
           </dl>
-          <p class="card-reason">
-            Reads a lot, writes little. Cheapest AA cost per task at req/5h
-            3000 or better and AA intel 34 or better.
-          </p>
+          <p class="pick-reason">Reads a lot, writes little. Cheapest AA cost per task at req/5h 3000 or better and AA intel 34 or better.</p>
         </article>
       </div>
     </section>
 
     <section aria-labelledby="table-heading">
-      <h2 id="table-heading">Top models</h2>
-      <p class="hint">
-        The models opencode.ai/go shows by default, in that order. The Pick
-        column says which role a model is recommended for. Click a header to
-        sort. Grey rows have no AA data, free models never get picked.
-      </p>
+      <div class="section-head">
+        <h2 id="table-heading">Top models</h2>
+        <p class="hint">
+          The models opencode.ai/go shows by default, in that order. The tag
+          next to a model is the role it is picked for. Click a header to sort.
+          Grey rows have no AA data, free models never get picked.
+        </p>
+      </div>
       <div class="table-wrap">
         <table id="models-table" class="models">
           <tbody><tr><td class="loading">JavaScript builds this table from the local data.</td></tr></tbody>
@@ -98,11 +97,18 @@
     </section>
 
     <section aria-labelledby="prompt-heading">
-      <h2 id="prompt-heading">Daily prompt</h2>
-      <p class="hint">Copy it, run it once a day in any opencode setup, get fresh picks.</p>
-      <div class="prompt-box">
-        <button id="copy-prompt" type="button">Copy prompt</button>
-        <pre id="daily-prompt">Re-evaluate the opencode Go models, $10 plan, NOT Go Plus, and recommend the best
+      <div class="section-head">
+        <h2 id="prompt-heading">Daily prompt</h2>
+        <p class="hint">Copy it, run it once a day in any opencode setup, get fresh picks.</p>
+      </div>
+      <div class="prompt-frame">
+        <div class="prompt-bar">
+          <span class="prompt-file">refresh-prompt</span>
+          <button id="copy-prompt" type="button">Copy prompt</button>
+        </div>
+        <details class="prompt-details">
+          <summary>Show prompt</summary>
+          <pre id="daily-prompt">Re-evaluate the opencode Go models, $10 plan, NOT Go Plus, and recommend the best
 model per agent role.
 
 Sources, primary only, never guess:
@@ -127,12 +133,13 @@ Output:
 1. Role table: role | model id | rationale | key numbers, meaning req/5h, $/month, AA intel, AA speed, AA $/Task.
 2. Table of those top models with the recommended role per model; mark free models as "excluded".
 3. Call out missing AA data explicitly as "no AA data".</pre>
+        </details>
       </div>
-      <ul id="sources-list" class="sources"></ul>
     </section>
   </main>
 
   <footer class="site-footer">
+    <p class="sources-line">Sources <span id="sources-list" class="sources"></span></p>
     <p>A static page. No build step, no tracking, no external requests. Reuse with attribution.</p>
   </footer>
 

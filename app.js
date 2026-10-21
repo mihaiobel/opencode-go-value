@@ -1,12 +1,12 @@
 /* opencode-go Value: client-side role recommendation and sortable table.
  * Loads ./data/latest.json (same origin, no external requests) and applies the
- * role matrix documented in the collapsed notes of index.html.
+ * role matrix described in the daily prompt of index.html.
  */
 "use strict";
 
 const DATA_URL = "data/latest.json";
 
-// Placeholder for a missing value across cards, table and meta.
+// Placeholder for a missing value across picks, table and meta.
 const NA = "n/a";
 
 /* ---------- helpers ---------- */
@@ -159,11 +159,11 @@ function fmtUsd(v, digits) {
   });
 }
 
-/* ---------- role cards ---------- */
+/* ---------- role picks ---------- */
 
-function fillRoleCard(card, model) {
-  const field = (name) => card.querySelector('[data-field="' + name + '"]');
-  // The slim cards carry model, req, month and intel. set() tolerates
+function fillRolePick(row, model) {
+  const field = (name) => row.querySelector('[data-field="' + name + '"]');
+  // Each pick carries model, req, month and intel. set() tolerates
   // a field being absent so the markup can stay lean.
   const set = (name, text) => {
     const el = field(name);
@@ -171,11 +171,11 @@ function fillRoleCard(card, model) {
   };
   const modelLine = field("model");
   if (!model) {
-    card.classList.add("card-empty");
+    row.classList.add("pick-empty");
     if (modelLine) modelLine.textContent = "No model meets this role's criteria.";
     return;
   }
-  card.classList.remove("card-empty");
+  row.classList.remove("pick-empty");
   if (modelLine) modelLine.textContent = model.id;
   set("req", fmtNum(model.requests_per_5h));
   set("month", fmtUsd(model.monthly_limit_usd, 0));
@@ -183,24 +183,17 @@ function fillRoleCard(card, model) {
 }
 
 function renderRoles(reco) {
-  const cards = document.querySelectorAll("#role-cards .card[data-role]");
-  for (const card of cards) {
-    fillRoleCard(card, reco[card.dataset.role]);
+  const rows = document.querySelectorAll("#picks .pick[data-role]");
+  for (const row of rows) {
+    fillRolePick(row, reco[row.dataset.role]);
   }
 }
 
 /* ---------- sortable table ---------- */
 
-const ROLE_LABELS = {
-  orchestrator: "Orchestrator",
-  dev: "Dev",
-  reviewer: "Reviewer",
-  researcher: "Researcher",
-};
-
+// Only the columns that drive a decision.
 const COLUMNS = [
   { key: "id", label: "Model", type: "text", cell: (m) => m.id },
-  { key: "role", label: "Pick", type: "text", cell: (m) => m._role || "" },
   { key: "requests_per_5h", label: "req/5h", type: "num", cell: (m) => m.requests_per_5h },
   { key: "monthly_limit_usd", label: "$/month", type: "num", cell: (m) => m.monthly_limit_usd },
   { key: "aa_intelligence", label: "AA intel", type: "num", cell: (m) => m.aa_intelligence },
@@ -211,30 +204,36 @@ let sortState = { key: null, dir: 1 };
 
 function fmtCell(col, m) {
   const raw = col.cell(m);
-  if (col.key === "role") return raw ? ROLE_LABELS[raw] : "";
   if (col.type === "text") return raw === null || raw === undefined ? NA : String(raw);
-  return col.key === "monthly_limit_usd" ? fmtUsd(raw, 0) : fmtNum(raw);
+  switch (col.key) {
+    case "monthly_limit_usd":
+      return fmtUsd(raw, 0);
+    default:
+      return fmtNum(raw);
+  }
 }
 
 function sortModels(models) {
   const col = COLUMNS.find((c) => c.key === sortState.key);
   if (!col) return models;
   const dir = sortState.dir;
+  // Rows that can never be picked (free or no AA data) sink below the rest.
+  const sinks = (m) => (isFree(m) || m.aa_status === "no_data" ? 1 : 0);
   return models.slice().sort((a, b) => {
+    const ds = sinks(a) - sinks(b);
+    if (ds !== 0) return ds;
     const av = col.cell(a);
     const bv = col.cell(b);
     if (col.type === "text") {
-      // models without a pick sort last
-      if (!av && bv) return 1;
-      if (av && !bv) return -1;
       return String(av).localeCompare(String(bv)) * dir;
     }
     const an = num(av);
     const bn = num(bv);
     // nulls always last, regardless of direction
-    if (an === null && bn === null) return 0;
+    if (an === null && bn === null) return String(a.id).localeCompare(String(b.id));
     if (an === null) return 1;
     if (bn === null) return -1;
+    if (an === bn) return String(a.id).localeCompare(String(b.id));
     return (an - bn) * dir;
   });
 }
@@ -242,12 +241,13 @@ function sortModels(models) {
 function renderTable(models, reco) {
   const table = document.getElementById("models-table");
   if (!table) return;
-  const recommended = new Set();
-  for (const role of Object.keys(ROLE_LABELS)) {
-    if (reco[role]) {
-      reco[role]._role = role;
-      recommended.add(reco[role].id);
-    }
+  // model id -> roles it was picked for, so the table can tag each row.
+  const recommended = new Map();
+  for (const role of ["orchestrator", "dev", "reviewer", "researcher"]) {
+    const m = reco[role];
+    if (!m) continue;
+    if (!recommended.has(m.id)) recommended.set(m.id, []);
+    recommended.get(m.id).push(role);
   }
 
   const thead = document.createElement("thead");
@@ -257,6 +257,7 @@ function renderTable(models, reco) {
     th.textContent = col.label;
     th.dataset.key = col.key;
     th.className = "sortable";
+    if (col.type === "num") th.classList.add("num");
     if (sortState.key === col.key) {
       th.classList.add(sortState.dir === 1 ? "sort-asc" : "sort-desc");
       th.setAttribute("aria-sort", sortState.dir === 1 ? "ascending" : "descending");
@@ -285,11 +286,18 @@ function renderTable(models, reco) {
     COLUMNS.forEach((col, idx) => {
       const td = document.createElement("td");
       td.textContent = fmtCell(col, m);
+      td.dataset.label = col.label;
       if (col.type === "num") td.classList.add("num");
       if (idx === 0) {
+        for (const role of recommended.get(m.id) || []) {
+          const badge = document.createElement("span");
+          badge.className = "tag";
+          badge.textContent = role;
+          td.append(" ", badge);
+        }
         if (isFree(m)) {
           const tag = document.createElement("span");
-          tag.className = "badge badge-free";
+          tag.className = "tag tag-free";
           tag.textContent = "free, not picked";
           tag.title =
             "Free model: limited-time availability, prone to instability/timeouts, no dedicated AA slug.";
@@ -312,11 +320,17 @@ function renderMeta(meta) {
   // meta.plan carries a parenthesised price; strip the parentheses for display.
   if (plan) {
     plan.textContent = String(meta.plan || "opencode-go")
-      .replace(" (", ",")
+      .replace(" (", ", ")
       .replace(")", "");
   }
   const aav = document.getElementById("aa-version");
-  if (aav) aav.textContent = meta.aa_index_version || NA;
+  // "Artificial Analysis Intelligence Index v4.3.2" -> "v4.3.2"; the chip label says the rest.
+  if (aav) {
+    const full = meta.aa_index_version || NA;
+    const v = /v[\d.]+\s*$/.exec(full);
+    aav.textContent = v ? v[0].trim() : full;
+    aav.title = full;
+  }
 }
 
 // The data lists many deep links: opencode docs and models pages, and one AA
@@ -343,14 +357,12 @@ function renderSources(meta) {
   }
   for (const root of (roots.length ? roots : SOURCE_ROOTS)) {
     const url = "https://" + root;
-    const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = url;
-    a.textContent = url;
+    a.textContent = root;
     a.rel = "noopener noreferrer";
     a.target = "_blank";
-    li.append(a);
-    host.append(li);
+    host.append(a);
   }
 }
 
@@ -387,11 +399,11 @@ function wireCopy() {
 /* ---------- bootstrap ---------- */
 
 function showLoadError(message) {
-  const host = document.getElementById("role-cards");
+  const host = document.getElementById("picks");
   if (!host) return;
-  for (const card of host.querySelectorAll(".card[data-role]")) {
-    card.classList.add("card-empty");
-    const line = card.querySelector('[data-field="model"]');
+  for (const row of host.querySelectorAll(".pick[data-role]")) {
+    row.classList.add("pick-empty");
+    const line = row.querySelector('[data-field="model"]');
     if (line) line.textContent = message;
   }
 }

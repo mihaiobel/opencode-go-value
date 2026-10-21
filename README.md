@@ -19,9 +19,9 @@ See the Role matrix in the Methodology section of the page.
 
 | File | Purpose |
 |---|---|
-| `index.html` | single page: role cards, sortable top-models table, sources, copy button |
+| `index.html` | single page: role picks, sortable top-models table, sources, copy button |
 | `app.js` | loads `data/latest.json`, computes the role recommendation, renders the sortable table |
-| `styles.css` | plain dark theme, mobile readable, no external dependencies |
+| `styles.css` | warm-paper ledger look, light and dark via system setting, mobile list layout, no external dependencies |
 | `data/latest.json` | meta and model data, as-of date in the meta |
 | `scripts/fetch_go.py` | updates the JSON from the Go docs, stdlib only |
 | `.github/workflows/update-data.yml` | daily cron at 06:00 UTC: refresh data and commit |
@@ -35,8 +35,8 @@ See the Role matrix in the Methodology section of the page.
 - `https://artificialanalysis.ai/models/<slug>` for Intelligence Index, Cost per Task, output speed.
 
 The page shows the models opencode.ai/go lists by default (`meta.featured_ids` in
-the JSON, in page order), each with its recommended role. Picks come from that set only.
-There is no combined score. Update `featured_ids` when the Go page changes.
+the JSON, in page order), each with the role it is picked for. Picks come from that
+set only. There is no combined score. Update `featured_ids` when the Go page changes.
 The Sources section of the page shows only the two canonical root domains,
 `https://opencode.ai` and `https://artificialanalysis.ai`.
 
@@ -54,8 +54,9 @@ The Sources section of the page shows only the two canonical root domains,
    mv data/latest.json.tmp data/latest.json
    ```
 
-4. `.github/workflows/update-data.yml` runs this daily at 06:00 UTC and commits
-   `data/latest.json` only when it changed. The as-of date in the meta is written along.
+4. `.github/workflows/update-data.yml` runs this daily at 06:00 UTC, commits
+   `data/latest.json` only when it changed and then starts the Pages deploy.
+   The as-of dates in the meta are written along.
 
 Help and options:
 

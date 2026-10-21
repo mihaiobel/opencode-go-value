@@ -37,12 +37,6 @@
       "requests_per_5h = Docs-Schaetzung (Go-Plan), nicht hartes Limit.",
       "aa_status: ok | partial | mapped_step-5 | no_data."
     ],
-    "new_models": [
-      "step-5-preview",
-      "beam-free",
-      "minimax-m3.1-flash-free",
-      "gemini-4-argon-contributor"
-    ],
     "undocumented_ids": [
       "glm-5.1",
       "grok-4.6",
@@ -399,6 +393,32 @@
       "free": false
     },
     {
+      "id": "gemini-4-argon-contributor",
+      "monthly_limit_usd": 30.0,
+      "requests_per_5h": 220.0,
+      "price_in": 4.0,
+      "price_out": 20.0,
+      "price_cached": 0.2,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false
+    },
+    {
+      "id": "step-5-preview",
+      "monthly_limit_usd": 15.0,
+      "requests_per_5h": 430.0,
+      "price_in": 1.0,
+      "price_out": 2.7,
+      "price_cached": 0.1,
+      "aa_intelligence": 44,
+      "aa_speed_tps": 89.2,
+      "aa_cost_per_task": 1.03,
+      "aa_status": "mapped_step-5",
+      "free": false
+    },
+    {
       "id": "beam-free",
       "monthly_limit_usd": null,
       "requests_per_5h": null,
@@ -413,19 +433,6 @@
       "excluded_reason": "Free nur befristet (limited time); kein eigener AA-Slug, keine Benchmark-Daten"
     },
     {
-      "id": "gemini-4-argon-contributor",
-      "monthly_limit_usd": 30.0,
-      "requests_per_5h": 220.0,
-      "price_in": 4.0,
-      "price_out": 20.0,
-      "price_cached": 0.2,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": false
-    },
-    {
       "id": "minimax-m3.1-flash-free",
       "monthly_limit_usd": null,
       "requests_per_5h": null,
@@ -438,19 +445,6 @@
       "aa_status": "no_data",
       "free": true,
       "excluded_reason": "Free nur befristet (limited time); kein eigener AA-Slug, keine Benchmark-Daten"
-    },
-    {
-      "id": "step-5-preview",
-      "monthly_limit_usd": 15.0,
-      "requests_per_5h": 430.0,
-      "price_in": 1.0,
-      "price_out": 2.7,
-      "price_cached": 0.1,
-      "aa_intelligence": 44,
-      "aa_speed_tps": 89.2,
-      "aa_cost_per_task": 1.03,
-      "aa_status": "mapped_step-5",
-      "free": false
     }
   ]
 }
