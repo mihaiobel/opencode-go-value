@@ -1,6 +1,6 @@
 {
   "meta": {
-    "stand_datum": "2026-10-21",
+    "stand_datum": "2026-10-22",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "quellen_urls": [
@@ -394,8 +394,8 @@
     },
     {
       "id": "gemini-4-argon-contributor",
-      "monthly_limit_usd": 30.0,
-      "requests_per_5h": 220.0,
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
       "price_in": 4.0,
       "price_out": 20.0,
       "price_cached": 0.2,
