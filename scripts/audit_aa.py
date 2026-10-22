@@ -137,7 +137,7 @@ def audit(model_id: str):
         if status is not None:
             print(f"  {status} {url}", file=sys.stderr)
     tried = ", ".join(url.removeprefix(MODELS_URL) for url, _ in cands)
-    print(f"    404 {model_id}: kein AA-Slug gefunden (geprüft: {tried})")
+    print(f"    404 {model_id}: no AA page found (tried: {tried})")
     return model_id, None, None, None, None, "404"
 
 

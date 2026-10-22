@@ -38,7 +38,7 @@ MODELS_URL = "https://opencode.ai/inference/go/v1/models"
 USER_AGENT = "opencode-go-value/1.0 (+https://opencode.ai/docs/go/)"
 
 FREE_REASON = (
-    "Free nur befristet (limited time); kein eigener AA-Slug, keine Benchmark-Daten"
+    "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
 )
 
 
@@ -225,10 +225,10 @@ def build(existing: dict, catalog: dict, model_ids: list[str], docs_url: str,
     models.sort(key=lambda m: (0, order[m["id"]]) if m["id"] in order else (1, m["id"]))
 
     meta = dict(existing.get("meta", {}))
-    meta["stand_datum"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d")
+    meta["as_of"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d")
     meta.setdefault("aa_index_version", "Artificial Analysis Intelligence Index v4.3.2")
     meta.setdefault("plan", "opencode-go ($10/month)")
-    meta.setdefault("quellen_urls", [docs_url, models_url])
+    meta.setdefault("source_urls", [docs_url, models_url])
     if new_ids:
         meta["new_models"] = new_ids
     else:
@@ -289,7 +289,7 @@ def main(argv=None) -> int:
         print(f"new model id: {mid} (aa_status=no_data)", file=sys.stderr)
     print(
         f"parsed {len(payload['models'])} Go models "
-        f"({len(new_ids)} new) - stand {payload['meta']['stand_datum']}",
+        f"({len(new_ids)} new) - as of {payload['meta']['as_of']}",
         file=sys.stderr,
     )
 

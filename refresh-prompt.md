@@ -1,7 +1,7 @@
-# Daily prompt: re-evaluate the opencode Go model choice
+# Daily prompt
 
-Copy-paste prompt for a foreign opencode setup that wants the same role logic as
-`opencode-go-value`. Runnable daily. The answer is a recommendation table.
+Paste this into any opencode setup to get the same role picks as the page. It can run
+every day and answers with a recommendation table.
 
 ---
 

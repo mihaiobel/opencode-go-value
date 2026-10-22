@@ -315,7 +315,7 @@ function renderTable(models, reco) {
 
 function renderMeta(meta) {
   const stand = document.getElementById("stand-date");
-  if (stand) stand.textContent = meta.stand_datum || NA;
+  if (stand) stand.textContent = meta.as_of || NA;
   const plan = document.getElementById("plan-name");
   // meta.plan carries a parenthesised price; strip the parentheses for display.
   if (plan) {
@@ -341,7 +341,7 @@ function renderSources(meta) {
   const host = document.getElementById("sources-list");
   if (!host) return;
   host.textContent = "";
-  const urls = Array.isArray(meta.quellen_urls) ? meta.quellen_urls : [];
+  const urls = Array.isArray(meta.source_urls) ? meta.source_urls : [];
   const seen = new Set();
   const roots = [];
   for (const raw of urls) {
