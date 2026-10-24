@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-10-23",
+    "as_of": "2026-10-24",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -65,7 +65,7 @@
       "beam-free"
     ],
     "new_models": [
-      "minimax-m3.1-flash"
+      "kimi-k3.1-pro"
     ]
   },
   "models": [
@@ -442,6 +442,19 @@
       "price_in": 0.15,
       "price_out": 0.6,
       "price_cached": 0.015,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false
+    },
+    {
+      "id": "kimi-k3.1-pro",
+      "monthly_limit_usd": 15.0,
+      "requests_per_5h": 147.0,
+      "price_in": 2.0,
+      "price_out": 10.0,
+      "price_cached": 0.2,
       "aa_intelligence": null,
       "aa_speed_tps": null,
       "aa_cost_per_task": null,
