@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-10-24",
+    "as_of": "2026-10-25",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -40,6 +40,7 @@
     "undocumented_ids": [
       "glm-5.1",
       "grok-4.6",
+      "iceman-contributor-free",
       "kimi-k2.6",
       "minimax-m2.5",
       "minimax-m2.7",
@@ -65,7 +66,7 @@
       "beam-free"
     ],
     "new_models": [
-      "kimi-k3.1-pro"
+      "gemini-4-argon"
     ]
   },
   "models": [
@@ -146,20 +147,6 @@
       "aa_cost_per_task": 0.15,
       "aa_status": "ok",
       "free": false
-    },
-    {
-      "id": "longcat-2.5-preview-free",
-      "monthly_limit_usd": null,
-      "requests_per_5h": null,
-      "price_in": 0.0,
-      "price_out": 0.0,
-      "price_cached": 0.0,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": true,
-      "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
     },
     {
       "id": "mimo-v2.6-flash",
@@ -396,19 +383,6 @@
       "free": false
     },
     {
-      "id": "gemini-4-argon-contributor",
-      "monthly_limit_usd": null,
-      "requests_per_5h": null,
-      "price_in": 4.0,
-      "price_out": 20.0,
-      "price_cached": 0.2,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": false
-    },
-    {
       "id": "step-5-preview",
       "monthly_limit_usd": 15.0,
       "requests_per_5h": 430.0,
@@ -455,6 +429,19 @@
       "price_in": 2.0,
       "price_out": 10.0,
       "price_cached": 0.2,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false
+    },
+    {
+      "id": "gemini-4-argon",
+      "monthly_limit_usd": 30.0,
+      "requests_per_5h": 440.0,
+      "price_in": null,
+      "price_out": null,
+      "price_cached": null,
       "aa_intelligence": null,
       "aa_speed_tps": null,
       "aa_cost_per_task": null,
