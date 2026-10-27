@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-10-26",
+    "as_of": "2026-10-27",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -40,7 +40,6 @@
     "undocumented_ids": [
       "glm-5.1",
       "grok-4.6",
-      "iceman-contributor-free",
       "kimi-k2.6",
       "minimax-m2.5",
       "minimax-m2.7",
@@ -64,6 +63,9 @@
       "longcat-2.5-preview-free",
       "minimax-m3.1-flash-free",
       "beam-free"
+    ],
+    "new_models": [
+      "iceman-contributor-free"
     ]
   },
   "models": [
@@ -444,6 +446,20 @@
       "aa_cost_per_task": null,
       "aa_status": "no_data",
       "free": false
+    },
+    {
+      "id": "iceman-contributor-free",
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
+      "price_in": 0.0,
+      "price_out": 0.0,
+      "price_cached": 0.0,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": true,
+      "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
     }
   ]
 }
