@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-10-27",
+    "as_of": "2026-10-28",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -63,9 +63,6 @@
       "longcat-2.5-preview-free",
       "minimax-m3.1-flash-free",
       "beam-free"
-    ],
-    "new_models": [
-      "iceman-contributor-free"
     ]
   },
   "models": [
