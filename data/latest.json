@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-10-30",
+    "as_of": "2026-10-31",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -276,8 +276,8 @@
     },
     {
       "id": "deepseek-v4.1-flash",
-      "monthly_limit_usd": 80.0,
-      "requests_per_5h": 34670.0,
+      "monthly_limit_usd": 100.0,
+      "requests_per_5h": 43330.0,
       "price_in": 0.15,
       "price_out": 0.6,
       "price_cached": 0.003,
