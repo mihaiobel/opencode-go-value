@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-11-04",
+    "as_of": "2026-11-05",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -63,6 +63,9 @@
       "longcat-2.5-preview-free",
       "minimax-m3.1-flash-free",
       "beam-free"
+    ],
+    "new_models": [
+      "hy4"
     ]
   },
   "models": [
@@ -457,6 +460,19 @@
       "aa_status": "no_data",
       "free": true,
       "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
+    },
+    {
+      "id": "hy4",
+      "monthly_limit_usd": 60.0,
+      "requests_per_5h": 2710.0,
+      "price_in": 0.834,
+      "price_out": 2.501,
+      "price_cached": 0.042,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false
     }
   ]
 }
