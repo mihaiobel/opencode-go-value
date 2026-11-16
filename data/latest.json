@@ -1,6 +1,6 @@
 {
   "meta": {
-    "as_of": "2026-11-15",
+    "as_of": "2026-11-16",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
@@ -56,6 +56,10 @@
       "longcat-2.5-preview-free",
       "minimax-m3.1-flash-free",
       "beam-free"
+    ],
+    "new_models": [
+      "hy4-flash-free",
+      "qwen4-max"
     ]
   },
   "models": [
@@ -477,6 +481,33 @@
       "aa_status": "no_data",
       "free": true,
       "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
+    },
+    {
+      "id": "hy4-flash-free",
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
+      "price_in": 0.0,
+      "price_out": 0.0,
+      "price_cached": 0.0,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": true,
+      "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
+    },
+    {
+      "id": "qwen4-max",
+      "monthly_limit_usd": 15.0,
+      "requests_per_5h": 460.0,
+      "price_in": 1.5,
+      "price_out": 4.5,
+      "price_cached": 0.075,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false
     }
   ]
 }
