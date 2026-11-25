@@ -32,8 +32,8 @@ Live page: https://mihaiobel.github.io/opencode-go-value/
 
 ## Data sources
 
-- https://opencode.ai/docs/go/ for prices, monthly limits and estimated requests per 5 hours
-- https://opencode.ai/inference/go/v1/models for model ids
+- https://opencode.ai/console/go for monthly limits and estimated requests per 5 hours (Go column)
+- https://opencode.ai/inference/go/v1/models for model ids and prices
 - https://artificialanalysis.ai/models/ for Intelligence Index, cost per task and output speed
 
 ## Updating the data
@@ -66,5 +66,5 @@ Then open http://localhost:8000/. The page makes no external requests.
 
 ## License
 
-The site code is MIT. The data comes from [opencode.ai](https://opencode.ai/docs/go/) and
+The site code is MIT. The data comes from [opencode.ai](https://opencode.ai/console/go) and
 [Artificial Analysis](https://artificialanalysis.ai/) and may be reused with attribution.

@@ -10,7 +10,7 @@ Re-evaluate the opencode Go models, $10 plan, NOT Go Plus, and recommend the bes
 model per agent role.
 
 Sources, primary only, never guess:
-- https://opencode.ai/docs/go/  -> the Go column of the pricing and requests tables
+- https://opencode.ai/console/go  -> the Go column of the limits table (requests / 5 hr, monthly limit)
   only, not Go Plus. Read req/5h, monthly limit in USD, in/out/cached prices in $/1M.
 - https://opencode.ai/inference/go/v1/models  -> full model ids.
 - https://artificialanalysis.ai/models/<slug>  -> Intelligence Index, Cost per Task in USD,

@@ -1,10 +1,10 @@
 {
   "meta": {
-    "as_of": "2026-11-16",
+    "as_of": "2026-11-25",
     "aa_index_version": "Artificial Analysis Intelligence Index v4.3.2",
     "plan": "opencode-go ($10/month)",
     "source_urls": [
-      "https://opencode.ai/docs/go/",
+      "https://opencode.ai/console/go",
       "https://opencode.ai/inference/go/v1/models",
       "https://artificialanalysis.ai/models/deepseek-v4-1-flash",
       "https://artificialanalysis.ai/models/deepseek-v4-flash",
@@ -34,11 +34,16 @@
     ],
     "notes": [
       "Prices are USD per 1M tokens. Where a model has context or peak tiers, the base tier is listed (Qwen3.7 Plus up to 256K, Grok up to 200K, GPT Luna up to 272K, Claude Haiku up to 100K, DeepSeek off-peak).",
-      "requests_per_5h is the estimate from the docs for the Go plan, not a hard limit.",
+      "requests_per_5h is the estimate from the console page (Go plan) for each model, not a hard limit.",
       "aa_status is one of ok, partial, mapped_step-5 or no_data."
     ],
     "undocumented_ids": [
-      "crouton-alpha-free"
+      "gemini-decision-1",
+      "gemini-embedding-2",
+      "gpt-6-luna-decision",
+      "jev-1.14",
+      "qwen3-embedding-8b",
+      "text-embedding-3-small"
     ],
     "featured_ids": [
       "kimi-k3",
@@ -58,8 +63,8 @@
       "beam-free"
     ],
     "new_models": [
-      "hy4-flash-free",
-      "qwen4-max"
+      "longcat-2.5",
+      "hungerg-free"
     ]
   },
   "models": [
@@ -78,8 +83,8 @@
     },
     {
       "id": "glm-5.3",
-      "monthly_limit_usd": 15.0,
-      "requests_per_5h": 220.0,
+      "monthly_limit_usd": 200.0,
+      "requests_per_5h": 2640.0,
       "price_in": 1.4,
       "price_out": 4.4,
       "price_cached": 0.26,
@@ -92,7 +97,7 @@
     {
       "id": "glm-5.2",
       "monthly_limit_usd": 60.0,
-      "requests_per_5h": 880.0,
+      "requests_per_5h": 792.0,
       "price_in": 1.4,
       "price_out": 4.4,
       "price_cached": 0.26,
@@ -105,9 +110,9 @@
     {
       "id": "kimi-k3",
       "monthly_limit_usd": 15.0,
-      "requests_per_5h": 110.0,
-      "price_in": 3.0,
-      "price_out": 15.0,
+      "requests_per_5h": 98.0,
+      "price_in": 3,
+      "price_out": 15,
       "price_cached": 0.3,
       "aa_intelligence": 44,
       "aa_speed_tps": 43.0,
@@ -118,26 +123,13 @@
     {
       "id": "kimi-k2.7-code",
       "monthly_limit_usd": 60.0,
-      "requests_per_5h": 1350.0,
+      "requests_per_5h": 994.0,
       "price_in": 0.95,
-      "price_out": 4.0,
+      "price_out": 4,
       "price_cached": 0.19,
       "aa_intelligence": 26,
       "aa_speed_tps": 74.8,
       "aa_cost_per_task": 0.54,
-      "aa_status": "ok",
-      "free": false
-    },
-    {
-      "id": "longcat-2.0",
-      "monthly_limit_usd": 60.0,
-      "requests_per_5h": 11400.0,
-      "price_in": 0.3,
-      "price_out": 1.2,
-      "price_cached": 0.006,
-      "aa_intelligence": 19,
-      "aa_speed_tps": 65.4,
-      "aa_cost_per_task": 0.15,
       "aa_status": "ok",
       "free": false
     },
@@ -157,7 +149,7 @@
     {
       "id": "mimo-v2.6-pro",
       "monthly_limit_usd": 15.0,
-      "requests_per_5h": 3250.0,
+      "requests_per_5h": 3260.0,
       "price_in": 0.435,
       "price_out": 0.87,
       "price_cached": 0.003625,
@@ -168,35 +160,9 @@
       "free": false
     },
     {
-      "id": "mimo-v2.5",
-      "monthly_limit_usd": 60.0,
-      "requests_per_5h": 30100.0,
-      "price_in": 0.14,
-      "price_out": 0.28,
-      "price_cached": 0.0028,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": false
-    },
-    {
-      "id": "mimo-v2.5-pro",
-      "monthly_limit_usd": 15.0,
-      "requests_per_5h": 3250.0,
-      "price_in": 0.435,
-      "price_out": 0.87,
-      "price_cached": 0.003625,
-      "aa_intelligence": 26,
-      "aa_speed_tps": 37.2,
-      "aa_cost_per_task": 0.05,
-      "aa_status": "ok",
-      "free": false
-    },
-    {
       "id": "minimax-m3",
       "monthly_limit_usd": 60.0,
-      "requests_per_5h": 3200.0,
+      "requests_per_5h": 3210.0,
       "price_in": 0.3,
       "price_out": 1.2,
       "price_cached": 0.06,
@@ -235,9 +201,9 @@
     {
       "id": "qwen3.8-max",
       "monthly_limit_usd": 15.0,
-      "requests_per_5h": 160.0,
-      "price_in": 2.0,
-      "price_out": 6.0,
+      "requests_per_5h": 162.0,
+      "price_in": 2,
+      "price_out": 6,
       "price_cached": 0.25,
       "aa_intelligence": 45,
       "aa_speed_tps": 41.9,
@@ -261,7 +227,7 @@
     {
       "id": "qwen3.7-plus",
       "monthly_limit_usd": 60.0,
-      "requests_per_5h": 4300.0,
+      "requests_per_5h": 4310.0,
       "price_in": 0.4,
       "price_out": 1.6,
       "price_cached": 0.04,
@@ -274,7 +240,7 @@
     {
       "id": "deepseek-v4.1-flash",
       "monthly_limit_usd": 100.0,
-      "requests_per_5h": 43330.0,
+      "requests_per_5h": 43300.0,
       "price_in": 0.15,
       "price_out": 0.6,
       "price_cached": 0.003,
@@ -287,7 +253,7 @@
     {
       "id": "deepseek-v4-pro",
       "monthly_limit_usd": 15.0,
-      "requests_per_5h": 1050.0,
+      "requests_per_5h": 1040.0,
       "price_in": 0.66,
       "price_out": 1.98,
       "price_cached": 0.022,
@@ -327,8 +293,8 @@
       "id": "grok-4.7",
       "monthly_limit_usd": 15.0,
       "requests_per_5h": 169.0,
-      "price_in": 2.0,
-      "price_out": 6.0,
+      "price_in": 2,
+      "price_out": 6,
       "price_cached": 0.5,
       "aa_intelligence": 46,
       "aa_speed_tps": 83.8,
@@ -378,8 +344,8 @@
     {
       "id": "step-5-preview",
       "monthly_limit_usd": 15.0,
-      "requests_per_5h": 430.0,
-      "price_in": 1.0,
+      "requests_per_5h": 426.0,
+      "price_in": 1,
       "price_out": 2.7,
       "price_cached": 0.1,
       "aa_intelligence": 44,
@@ -419,8 +385,8 @@
       "id": "kimi-k3.1-pro",
       "monthly_limit_usd": 15.0,
       "requests_per_5h": 147.0,
-      "price_in": 2.0,
-      "price_out": 10.0,
+      "price_in": 2,
+      "price_out": 10,
       "price_cached": 0.2,
       "aa_intelligence": null,
       "aa_speed_tps": null,
@@ -431,10 +397,10 @@
     {
       "id": "gemini-4-argon",
       "monthly_limit_usd": 30.0,
-      "requests_per_5h": 440.0,
-      "price_in": null,
-      "price_out": null,
-      "price_cached": null,
+      "requests_per_5h": 566.0,
+      "price_in": 2,
+      "price_out": 10,
+      "price_cached": 0.1,
       "aa_intelligence": null,
       "aa_speed_tps": null,
       "aa_cost_per_task": null,
@@ -469,20 +435,6 @@
       "free": false
     },
     {
-      "id": "longcat-2.5-free",
-      "monthly_limit_usd": null,
-      "requests_per_5h": null,
-      "price_in": 0.0,
-      "price_out": 0.0,
-      "price_cached": 0.0,
-      "aa_intelligence": null,
-      "aa_speed_tps": null,
-      "aa_cost_per_task": null,
-      "aa_status": "no_data",
-      "free": true,
-      "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
-    },
-    {
       "id": "hy4-flash-free",
       "monthly_limit_usd": null,
       "requests_per_5h": null,
@@ -499,10 +451,37 @@
     {
       "id": "qwen4-max",
       "monthly_limit_usd": 15.0,
-      "requests_per_5h": 460.0,
+      "requests_per_5h": 463.0,
       "price_in": 1.5,
       "price_out": 4.5,
       "price_cached": 0.075,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": false
+    },
+    {
+      "id": "hungerg-free",
+      "monthly_limit_usd": null,
+      "requests_per_5h": null,
+      "price_in": 0.0,
+      "price_out": 0.0,
+      "price_cached": 0.0,
+      "aa_intelligence": null,
+      "aa_speed_tps": null,
+      "aa_cost_per_task": null,
+      "aa_status": "no_data",
+      "free": true,
+      "excluded_reason": "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
+    },
+    {
+      "id": "longcat-2.5",
+      "monthly_limit_usd": 60.0,
+      "requests_per_5h": 11400.0,
+      "price_in": 0.3,
+      "price_out": 1.2,
+      "price_cached": 0.006,
       "aa_intelligence": null,
       "aa_speed_tps": null,
       "aa_cost_per_task": null,

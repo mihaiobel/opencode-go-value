@@ -5,16 +5,25 @@ Only the standard library is used (urllib, re, json, ...).
 
 What it does
 ------------
-1. Downloads https://opencode.ai/docs/go/ and https://opencode.ai/inference/go/v1/models.
-2. Parses the **Go plan** tables (``data-plan-panel="go"``) only -- the Go Plus tab
-   (``data-plan-panel="go-plus"``) is ignored on purpose.
-3. Carries the Artificial Analysis values (aa_intelligence, aa_speed_tps,
+1. Downloads https://opencode.ai/console/go (Go limits table) and
+   https://opencode.ai/inference/go/v1/models (model ids, names, prices, Go monthly usage).
+2. Reads the **Go plan** values only: the "Est. requests / 5 hr" and "Monthly limit"
+   cells for the ``go`` plan. The Go Plus values are ignored on purpose.
+   The table is located by its ``data-allowance-type`` cells, not by heading text,
+   so the page layout can change without breaking the parser.
+3. Maps every table row to a model id via the models endpoint (normalized display
+   name or id). Prices come from the endpoint's ``cost`` field.
+4. Carries the Artificial Analysis values (aa_intelligence, aa_speed_tps,
    aa_cost_per_task, aa_status) over from the existing ``data/latest.json`` by model id.
    ``meta.featured_ids`` (the models opencode.ai/go lists by default) is kept as is.
-4. Detects new model ids by diffing against the existing file. New models get
+5. Detects new model ids by diffing against the existing file. New models get
    ``aa_status: "no_data"`` and null AA fields (benchmarks are never guessed).
-5. Prints the updated JSON to stdout. Diagnostics go to stderr, so stdout stays
+6. Prints the updated JSON to stdout. Diagnostics go to stderr, so stdout stays
    valid JSON and can be redirected straight into ``data/latest.json``.
+
+History: until 2026-11 the data came from ``/docs/go/`` (tables with
+``data-plan-panel``). That page was restructured (now a redirect to
+``/docs/console/go/`` without the limits), hence the switch to the console page.
 
 Example
 -------
@@ -33,9 +42,10 @@ import sys
 import urllib.request
 from html import unescape
 
-DOCS_URL = "https://opencode.ai/docs/go/"
+CONSOLE_URL = "https://opencode.ai/console/go"
 MODELS_URL = "https://opencode.ai/inference/go/v1/models"
-USER_AGENT = "opencode-go-value/1.0 (+https://opencode.ai/docs/go/)"
+LEGACY_DOCS_URLS = ("https://opencode.ai/docs/go/", "https://opencode.ai/docs/console/go/")
+USER_AGENT = "opencode-go-value/1.0 (+https://opencode.ai/console/go)"
 
 FREE_REASON = (
     "Free for a limited time only, no own Artificial Analysis page, no benchmark data."
@@ -43,7 +53,7 @@ FREE_REASON = (
 
 
 def _fetch(url: str, insecure: bool = False, timeout: int = 30) -> str:
-    """Fetch *url* and return the decoded body."""
+    """Fetch *url* and return the decoded body (redirects are followed)."""
     if insecure:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
@@ -56,7 +66,7 @@ def _fetch(url: str, insecure: bool = False, timeout: int = 30) -> str:
 
 
 def _strip_tags(cell: str) -> str:
-    """Turn an HTML cell into plain text."""
+    """Turn an HTML fragment into plain text."""
     cell = re.sub(r"(?is)<small\b.*?</small>", " ", cell)
     cell = re.sub(r"(?i)<br\s*/?>", " ", cell)
     cell = re.sub(r"<[^>]+>", "", cell)
@@ -64,34 +74,15 @@ def _strip_tags(cell: str) -> str:
     return re.sub(r"\s+", " ", cell).strip()
 
 
-def _parse_table(table_html: str) -> list[list[str]]:
-    rows: list[list[str]] = []
-    for row in re.findall(r"(?is)<tr[^>]*>(.*?)</tr>", table_html):
-        cells = re.findall(r"(?is)<t[dh][^>]*>(.*?)</t[dh]>", row)
-        rows.append([_strip_tags(c) for c in cells])
-    return rows
+def _num(text):
+    """Parse a currency/number cell into a float, or None when not numeric.
 
-
-def _go_tables(html: str) -> list[list[list[str]]]:
-    """Return the parsed tables inside every ``data-plan-panel="go"`` block."""
-    tables: list[list[list[str]]] = []
-    for match in re.finditer(r'data-plan-panel="go"', html):
-        start = html.find("<table", match.end())
-        if start == -1:
-            continue
-        end = html.find("</table>", start)
-        if end == -1:
-            continue
-        tables.append(_parse_table(html[start : end + len("</table>")]))
-    return tables
-
-
-def _num(text: str):
-    """Parse a currency/number cell into a float, or None when not numeric."""
+    ``∞`` / ``Unlimited`` / ``-`` / ``Free`` mean "no numeric limit" and give None.
+    """
     if text is None:
         return None
-    cleaned = text.replace(",", "").replace("$", "").strip()
-    if cleaned == "" or cleaned.lower().startswith("unlimited") or cleaned == "-":
+    cleaned = str(text).replace(",", "").replace("$", "").strip()
+    if cleaned in ("", "-", "∞") or cleaned.lower().startswith(("unlimited", "free")):
         return None
     try:
         return float(cleaned)
@@ -99,25 +90,9 @@ def _num(text: str):
         return None
 
 
-def _find_table(tables, header_key: str):
-    for rows in tables:
-        if rows and any(header_key.lower() in c.lower() for c in rows[0]):
-            return rows
-    return None
-
-
-def _endpoint_map(html: str) -> dict[str, str]:
-    """Map display name -> model id from the non-plan 'Model ID' endpoint table."""
-    mapping: dict[str, str] = {}
-    for tbl in re.findall(r"(?is)<table[^>]*>.*?</table>", html):
-        rows = _parse_table(tbl)
-        if not rows or not any("model id" in c.lower() for c in rows[0]):
-            continue
-        for cells in rows[1:]:
-            if len(cells) >= 2 and cells[1]:
-                mapping[cells[0].strip()] = cells[1].strip()
-        break
-    return mapping
+def _norm(name: str) -> str:
+    """Loose key for matching display names against model ids: 'GLM-5.3-Flash' -> 'glm 5 3 flash'."""
+    return re.sub(r"[^a-z0-9]+", " ", unescape(name).lower()).strip()
 
 
 def _slug(name: str) -> str:
@@ -126,53 +101,103 @@ def _slug(name: str) -> str:
     return re.sub(r"[^a-z0-9.\-]", "", s)
 
 
-def _base_name(name: str) -> str:
-    """Drop tiering qualifiers, e.g. 'Qwen3.7 Plus (<= 256K tokens)' -> 'Qwen3.7 Plus'."""
-    return re.sub(r"\s*\([^)]*\)\s*", " ", name).strip()
+def parse_console_rows(html: str) -> list[dict]:
+    """Return ``[{name, requests_per_5h, monthly_limit_usd}]`` for the Go plan.
+
+    The limits table is the one whose cells carry both ``data-allowance-type="requests"``
+    and ``data-allowance-type="usage"``. Each cell holds an sr-only summary such as
+    ``Go: 98; Go Plus: 392``; only the ``Go:`` part is used.
+    """
+    table = None
+    for match in re.finditer(r"(?is)<table\b.*?</table>", html):
+        block = match.group(0)
+        if 'data-allowance-type="requests"' in block and 'data-allowance-type="usage"' in block:
+            table = block
+            break
+    if table is None:
+        raise ValueError("Go limits table (requests / monthly usage) not found on console page")
+
+    rows: list[dict] = []
+    for row in re.findall(r"(?is)<tr\b[^>]*>(.*?)</tr>", table):
+        title = re.search(r'data-layer="model-name"[^>]*\btitle="([^"]*)"', row)
+        if not title:
+            continue  # header row or unrelated row
+        name = unescape(title.group(1)).strip()
+
+        values: dict[str, object] = {}
+        for kind in ("requests", "usage"):
+            cell = re.search(
+                rf'(?is)<td\b[^>]*data-allowance-type="{kind}"[^>]*>(.*?)</td>', row)
+            summary = re.search(r'<span class="sr-only">([^<]*)</span>', cell.group(1)) if cell else None
+            go = re.search(r"(?:^|;)\s*Go:\s*([^;]+)", unescape(summary.group(1))) if summary else None
+            if go is None:
+                raise ValueError(f"no Go value for {name!r} ({kind}) on console page")
+            values[kind] = _num(go.group(1))
+
+        rows.append({
+            "name": name,
+            "requests_per_5h": values["requests"],
+            "monthly_limit_usd": values["usage"],
+        })
+
+    if not rows:
+        raise ValueError("Go limits table contained no model rows")
+    return rows
 
 
-def parse_go_catalog(html: str) -> dict[str, dict]:
-    """Parse the Go pricing + request tables into a model catalog keyed by id."""
-    tables = _go_tables(html)
-    pricing = _find_table(tables, "Monthly limit")
-    requests = _find_table(tables, "Requests per 5 hours")
-    if pricing is None:
-        raise ValueError("Go pricing table (Monthly limit) not found in docs page")
+def _api_prices(model: dict) -> tuple:
+    text = (model.get("cost") or {}).get("text") or {}
+    inp = text.get("input") or {}
+    out = text.get("output") or {}
+    cache = inp.get("cache") or {}
+    return inp.get("price"), out.get("price"), cache.get("read")
 
-    endpoints = _endpoint_map(html)
 
-    # name -> req/5h (None = Unlimited); keyed by base name
-    req_by_name: dict[str, float] = {}
-    if requests is not None:
-        for cells in requests[1:]:
-            if len(cells) >= 2:
-                req_by_name[_base_name(cells[0])] = _num(cells[1])
+def build_catalog(rows: list[dict], api_models: list[dict],
+                  previous: dict | None = None) -> dict[str, dict]:
+    """Join console rows with the models endpoint (ids, prices) into a catalog keyed by id.
+
+    Rows the endpoint does not know keep the id slug and the prices from *previous*
+    (the existing data file), so the last known price is shown instead of nothing.
+    """
+    previous = previous or {}
+    index: dict[str, dict] = {}
+    for m in api_models:
+        mid = m.get("id")
+        if not mid:
+            continue
+        index.setdefault(_norm(mid), m)
+        if m.get("name"):
+            index.setdefault(_norm(m["name"]), m)
 
     catalog: dict[str, dict] = {}
-    for cells in pricing[1:]:
-        if len(cells) < 6:
-            continue
-        base = _base_name(cells[0])
-        if not base:
-            continue
-        # Tiered rows (DeepSeek peak/off-peak, context tiers, ...) collapse onto one
-        # base id; the first listed tier (the base/cheapest one) wins.
-        model_id = endpoints.get(base) or _slug(base)
+    for row in rows:
+        api = index.get(_norm(row["name"]))
+        if api is None:
+            model_id = _slug(row["name"])
+            old = previous.get(model_id, {})
+            print(f"warning: {row['name']!r} not in models endpoint, "
+                  f"keeping last known prices for {model_id!r}", file=sys.stderr)
+            price_in, price_out, price_cached = (
+                old.get("price_in"), old.get("price_out"), old.get("price_cached"))
+        else:
+            model_id = api["id"]
+            price_in, price_out, price_cached = _api_prices(api)
         if model_id in catalog:
             continue
-        free = "free" in base.lower() or model_id.endswith("-free")
+        free = "free" in row["name"].lower() or model_id.endswith("-free")
         catalog[model_id] = {
             "id": model_id,
-            "name": base,
-            "monthly_limit_usd": _num(cells[5]),
-            "requests_per_5h": req_by_name.get(base),
-            "price_in": 0.0 if free else _num(cells[1]),
-            "price_out": 0.0 if free else _num(cells[2]),
-            "price_cached": 0.0 if free else _num(cells[3]),
+            "name": row["name"],
+            "monthly_limit_usd": row["monthly_limit_usd"],
+            "requests_per_5h": row["requests_per_5h"],
+            "price_in": 0.0 if free else price_in,
+            "price_out": 0.0 if free else price_out,
+            "price_cached": 0.0 if free else price_cached,
             "free": free,
         }
     if not catalog:
-        raise ValueError("Go pricing table contained no model rows")
+        raise ValueError("Go limits table produced an empty catalog")
     return catalog
 
 
@@ -187,7 +212,7 @@ def _load_existing(path: str):
         return {"meta": {}, "models": []}
 
 
-def build(existing: dict, catalog: dict, model_ids: list[str], docs_url: str,
+def build(existing: dict, catalog: dict, model_ids: list[str], console_url: str,
           models_url: str) -> tuple[dict, list[str]]:
     old_by_id = {m.get("id"): m for m in existing.get("models", []) if m.get("id")}
     new_ids = [mid for mid in catalog if mid not in old_by_id]
@@ -228,12 +253,15 @@ def build(existing: dict, catalog: dict, model_ids: list[str], docs_url: str,
     meta["as_of"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d")
     meta.setdefault("aa_index_version", "Artificial Analysis Intelligence Index v4.3.2")
     meta.setdefault("plan", "opencode-go ($10/month)")
-    meta.setdefault("source_urls", [docs_url, models_url])
+    # opencode sources first (current pages), then the non-opencode sources kept as they were
+    kept = [u for u in meta.get("source_urls", [])
+            if u not in (console_url, models_url, *LEGACY_DOCS_URLS)]
+    meta["source_urls"] = [console_url, models_url] + kept
     if new_ids:
         meta["new_models"] = new_ids
     else:
         meta.pop("new_models", None)
-    # ids the models endpoint knows but the docs pricing table does not list
+    # ids the models endpoint knows but the Go limits table does not list
     undocumented = sorted(set(model_ids) - set(catalog))
     if undocumented:
         meta["undocumented_ids"] = undocumented
@@ -245,7 +273,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="fetch_go.py",
         description=(
-            "Fetch the opencode Go plan tables (Go, not Go Plus), carry over the "
+            "Fetch the opencode Go plan limits (Go, not Go Plus), carry over the "
             "Artificial Analysis values from data/latest.json and print the updated "
             "JSON catalog to stdout."
         ),
@@ -261,8 +289,8 @@ def main(argv=None) -> int:
     parser.add_argument("--data", default="data/latest.json",
                         help="existing catalog to diff against / carry AA values from "
                              "(default: data/latest.json)")
-    parser.add_argument("--docs-url", default=DOCS_URL,
-                        help=f"docs page with the Go tables (default: {DOCS_URL})")
+    parser.add_argument("--console-url", default=CONSOLE_URL,
+                        help=f"console page with the Go limits table (default: {CONSOLE_URL})")
     parser.add_argument("--models-url", default=MODELS_URL,
                         help=f"models endpoint (default: {MODELS_URL})")
     parser.add_argument("--timeout", type=int, default=30,
@@ -272,18 +300,21 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        print(f"fetching {args.docs_url}", file=sys.stderr)
-        docs_html = _fetch(args.docs_url, args.insecure, args.timeout)
+        print(f"fetching {args.console_url}", file=sys.stderr)
+        console_html = _fetch(args.console_url, args.insecure, args.timeout)
         print(f"fetching {args.models_url}", file=sys.stderr)
         models_raw = _fetch(args.models_url, args.insecure, args.timeout)
-        model_ids = [m.get("id") for m in json.loads(models_raw).get("data", []) if m.get("id")]
-        catalog = parse_go_catalog(docs_html)
+        api_models = json.loads(models_raw).get("data", [])
+        model_ids = [m.get("id") for m in api_models if m.get("id")]
+        rows = parse_console_rows(console_html)
     except Exception as exc:  # noqa: BLE001 - report and fail cleanly
         print(f"error: {type(exc).__name__}: {exc}", file=sys.stderr)
         return 1
 
     existing = _load_existing(args.data)
-    payload, new_ids = build(existing, catalog, model_ids, args.docs_url, args.models_url)
+    previous = {m.get("id"): m for m in existing.get("models", []) if m.get("id")}
+    catalog = build_catalog(rows, api_models, previous)
+    payload, new_ids = build(existing, catalog, model_ids, args.console_url, args.models_url)
 
     for mid in new_ids:
         print(f"new model id: {mid} (aa_status=no_data)", file=sys.stderr)
